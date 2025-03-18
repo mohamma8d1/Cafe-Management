@@ -1,0 +1,11 @@
+E:\MainProject\CafeManagemnt\CafeManagemnt\bin\Debug\CafeManagemnt.exe.config
+E:\MainProject\CafeManagemnt\CafeManagemnt\bin\Debug\CafeManagemnt.exe
+E:\MainProject\CafeManagemnt\CafeManagemnt\bin\Debug\CafeManagemnt.pdb
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.AssemblyReference.cache
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.Controls.MainTextBox.resources
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.Properties.Resources.resources
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.GenerateResource.cache
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.CoreCompileInputs.cache
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.exe
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.pdb
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.Form1.resources
