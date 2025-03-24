@@ -26,5 +26,26 @@ namespace CafeManagemnt
         {
 
         }
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            string username = usernameTxtBox.Texts;
+            string password = passwordTxtBox.Texts;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void usernameTxtBox_MouseHover(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void btnLogin_MouseHover(object sender, EventArgs e)
+        {
+           
+        }
     }
 }

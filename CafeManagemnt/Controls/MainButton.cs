@@ -17,7 +17,7 @@ namespace CafeManagemnt.Controls
         //Fields
         private int borderSize = 0;
         private int borderRadius = 0;
-        private Color borderColor = Color.PaleVioletRed;
+        private Color borderColor = Color.White;
 
         //Properties
         public int BorderSize
@@ -148,6 +148,22 @@ namespace CafeManagemnt.Controls
         {
             if (borderRadius > this.Height)
                 borderRadius = this.Height;
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // MainButton
+            // 
+            this.MouseHover += new System.EventHandler(this.MainButton_MouseHover);
+            this.ResumeLayout(false);
+
+        }
+
+        private void MainButton_MouseHover(object sender, EventArgs e)
+        {
+            this.BackColor = Color.Transparent;
         }
     }
 }

@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\MainButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MainTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -60,6 +63,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Controls\MainButton.resx">
+      <DependentUpon>MainButton.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MainTextBox.resx">
       <DependentUpon>MainTextBox.cs</DependentUpon>
     </EmbeddedResource>
