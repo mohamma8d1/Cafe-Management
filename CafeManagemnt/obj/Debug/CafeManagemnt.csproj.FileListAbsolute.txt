@@ -10,3 +10,6 @@ E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.exe
 E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.pdb
 E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.Form1.resources
 E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.Controls.MainButton.resources
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.AdminForm.resources
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.OwnerForm.resources
+E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.StaffForm.resources

@@ -33,5 +33,16 @@ namespace CafeManagemnt.Properties {
                 return ((string)(this["CafeLoginConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=MOHAMMAD-LOQ;Initial Catalog=CafeManagementDB;Integrated Security=Tru" +
+            "e;Encrypt=False")]
+        public string CafeManagementDBConnectionString {
+            get {
+                return ((string)(this["CafeManagementDBConnectionString"]));
+            }
+        }
     }
 }

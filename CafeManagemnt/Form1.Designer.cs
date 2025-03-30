@@ -57,6 +57,7 @@
             this.btnLogin.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(224)))), ((int)(((byte)(212)))));
             this.btnLogin.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.btnLogin.UseVisualStyleBackColor = false;
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click_1);
             this.btnLogin.MouseHover += new System.EventHandler(this.btnLogin_MouseHover);
             // 
             // lblLogin
