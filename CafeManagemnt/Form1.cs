@@ -1,120 +1,188 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 
 namespace CafeManagemnt
 {
     public partial class Form1 : Form
     {
+        private const string ConnectionString = @"Data Source=MOHAMMAD-LOQ;Initial Catalog=CafeManagementDB;Integrated Security=True;Encrypt=False";
+
         public Form1()
         {
             InitializeComponent();
         }
-
-        SqlConnection connect = new SqlConnection(@"Data Source=MOHAMMAD-LOQ;Initial Catalog=CafeManagementDB;Integrated Security=True;Encrypt=False");
-
-
-
-
-        private void mainTextBox1__TextChanged(object sender, EventArgs e)
+        public static bool CreateUser(string username, string password, string role)
         {
+            try
+            {
+                string hashedPassword = PasswordHelper.HashPassword(password);
 
+                string query = @"INSERT INTO Login_users 
+                               (username, password_hash, role, status) 
+                               VALUES (@username, @password_hash, @role, '1')";
+
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@username", username);
+                    command.Parameters.AddWithValue("@password_hash", hashedPassword);
+                    command.Parameters.AddWithValue("@role", role);
+
+                    connection.Open();
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        public static bool UpdatePassword(string username, string newPassword)
         {
+            try
+            {
+                string hashedPassword = PasswordHelper.HashPassword(newPassword);
 
+                string query = @"UPDATE Login_users 
+                                SET password_hash = @password_hash 
+                                WHERE username = @username";
+
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@username", username);
+                    command.Parameters.AddWithValue("@password_hash", hashedPassword);
+
+                    connection.Open();
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            
         }
 
-
-
-        private void Form1_Load(object sender, EventArgs e)
+        private void ShowLoginError(string message)
         {
-
+            MessageBox.Show(message, "Login Failed",MessageBoxButtons.OK, MessageBoxIcon.Error);
+            passwordTxtBox.Texts = "";
+            usernameTxtBox.Focus();
         }
 
-        private void usernameTxtBox_MouseHover(object sender, EventArgs e)
+        private void btnExit_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void btnLogin_MouseHover(object sender, EventArgs e)
-        {
-
+            Application.Exit();
         }
 
         private void btnLogin_Click_1(object sender, EventArgs e)
         {
-            string username, user_password;
-            username = usernameTxtBox.Texts;
-            user_password = passwordTxtBox.Texts;
+            string username = usernameTxtBox.Texts.Trim();
+            string password = passwordTxtBox.Texts;
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Please enter both username and password", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             try
             {
-                connect.Open();
-
-                // Use parameterized query to prevent SQL injection
-                string query = "SELECT username, role, status FROM Login_users WHERE username = @username AND password = @password AND status = '1'";
-
-                using (SqlCommand cmd = new SqlCommand(query, connect))
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
-                    cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@password", user_password); // Note: You should hash passwords
+                    connection.Open();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    string query = @"SELECT username, password_hash, role, status 
+                                   FROM Login_users 
+                                   WHERE username = @username AND status = '1'";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        if (reader.Read())
-                        {
-                            // Get the role from database
-                            string userRole = reader["role"].ToString();
-                            string userstatus = reader["status"].ToString();
+                        command.Parameters.AddWithValue("@username", username);
 
-                            switch (userRole)
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
                             {
-                                case "admin":
-                                    AdminForm admin_Form = new AdminForm();
-                                    admin_Form.Show();
-                                    this.Hide();
-                                    break;
 
-                                case "owner":
-                                    OwnerForm owner_Form = new OwnerForm();
-                                    owner_Form.Show();
-                                    this.Hide();
-                                    break;
+                                string storedHash = reader["password_hash"].ToString();
+                                string role = reader["role"].ToString();
 
-                                case "staff":
-                                    StaffForm staff_Form = new StaffForm();
-                                    staff_Form.Show();
+                                if (PasswordHelper.VerifyPassword(password, storedHash))
+                                {
+                                    OpenRoleSpecificForm(role);
                                     this.Hide();
-                                    break;
+                                }
+                                else
+                                {
+                                    ShowLoginError("Invalid username or password");
+                                }
                             }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid login details", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            usernameTxtBox.Texts = "";
-                            passwordTxtBox.Texts = "";
-                            usernameTxtBox.Focus();
+                            else
+                            {
+                                ShowLoginError("Invalid username or password or Not Active account");
+                            }
                         }
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                MessageBox.Show($"Database error: {ex.Message}", "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Unexpected error: {ex.Message}", "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
+        }
+
+        private void OpenRoleSpecificForm(string role)
+        {
+            // First hide the login form
+            this.Hide();
+            try
             {
-                connect.Close();
+                Form roleForm = null;
+
+                switch (role.ToLower())
+                {
+                    case "admin":
+                        roleForm = new AdminForm();
+                        break;
+
+                    case "owner":
+                        roleForm = new OwnerForm();
+                        break;
+
+                    case "staff":
+                        roleForm = new StaffForm();
+                        break;
+
+                    default:
+                        MessageBox.Show("Unknown user role", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        this.Show();
+                        return;
+                }
+
+                roleForm.FormClosed += (sender, e) =>
+                {
+                    this.Close();
+                };
+                roleForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening form: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Show();
             }
         }
     }

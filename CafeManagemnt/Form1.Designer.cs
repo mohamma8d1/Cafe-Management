@@ -58,7 +58,6 @@
             this.btnLogin.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.btnLogin.UseVisualStyleBackColor = false;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click_1);
-            this.btnLogin.MouseHover += new System.EventHandler(this.btnLogin_MouseHover);
             // 
             // lblLogin
             // 
@@ -113,7 +112,7 @@
             this.passwordTxtBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
             this.passwordTxtBox.Bordercolor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(224)))));
             this.passwordTxtBox.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(224)))), ((int)(((byte)(212)))));
-            this.passwordTxtBox.Bordersize = 2;
+            this.passwordTxtBox.Bordersize = 7;
             this.passwordTxtBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passwordTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(224)))));
             this.passwordTxtBox.Location = new System.Drawing.Point(412, 444);
@@ -132,7 +131,7 @@
             this.usernameTxtBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
             this.usernameTxtBox.Bordercolor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(224)))));
             this.usernameTxtBox.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(224)))), ((int)(((byte)(212)))));
-            this.usernameTxtBox.Bordersize = 2;
+            this.usernameTxtBox.Bordersize = 7;
             this.usernameTxtBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.usernameTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(224)))));
             this.usernameTxtBox.Location = new System.Drawing.Point(412, 335);
@@ -145,7 +144,6 @@
             this.usernameTxtBox.TabIndex = 7;
             this.usernameTxtBox.Texts = "";
             this.usernameTxtBox.Underlinedstyle = true;
-            this.usernameTxtBox.MouseHover += new System.EventHandler(this.usernameTxtBox_MouseHover);
             // 
             // Form1
             // 
@@ -166,7 +164,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
             this.Text = "Cafe Management";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
