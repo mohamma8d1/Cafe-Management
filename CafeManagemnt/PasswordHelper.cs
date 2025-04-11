@@ -31,7 +31,10 @@ namespace CafeManagemnt
             // Convert to base64
             return Convert.ToBase64String(hashBytes);
         }
+        
 
+
+        // verify password when login 
         public static bool VerifyPassword(string password, string hashedPassword)
         {
             // Convert base64 string to bytes
