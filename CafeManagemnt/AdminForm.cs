@@ -1,5 +1,8 @@
 ﻿using System;
+<<<<<<< HEAD
 using System.Data;
+=======
+>>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using UserManagementSystem;
@@ -9,8 +12,12 @@ namespace CafeManagemnt
     public partial class AdminForm : Form
     {
         private readonly int _userId;
+<<<<<<< HEAD
         private const string ConnectionString = @"Data Source=MOHAMMAD-LOQ;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
         private DataTable _dataTable;
+=======
+        private const string ConnectionString = @"Data Source=DESKTOP-5D6TADI;Initial Catalog=CafeManagementDB;Integrated Security=True;Encrypt=False";
+>>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
 
         public AdminForm(int userId)
         {
@@ -19,6 +26,7 @@ namespace CafeManagemnt
             this.FormClosing += AdminForm_FormClosing;
         }
 
+<<<<<<< HEAD
         private void AdminForm_Load(object sender, EventArgs e)
         {
             SetupDataGridView();
@@ -180,6 +188,11 @@ namespace CafeManagemnt
 
         private void AdminForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+=======
+        private void AdminForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Show confirmation message
+>>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
             DialogResult result = MessageBox.Show(
                 "Are you sure you want to close and log out?",
                 "Confirm Exit",
@@ -189,17 +202,30 @@ namespace CafeManagemnt
 
             if (result == DialogResult.No)
             {
+<<<<<<< HEAD
+=======
+                // Cancel closing if user selects No
+>>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
                 e.Cancel = true;
                 return;
             }
 
+<<<<<<< HEAD
+=======
+            // User selected Yes, log logout time
+>>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
             try
             {
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
                     string query = @"UPDATE user_logs 
+<<<<<<< HEAD
                                     SET logout_time = GETDATE() 
                                     WHERE user_id = @user_id AND logout_time IS NULL";
+=======
+                                   SET logout_time = GETDATE() 
+                                   WHERE user_id = @user_id AND logout_time IS NULL";
+>>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@user_id", _userId);
@@ -212,6 +238,7 @@ namespace CafeManagemnt
             {
                 MessageBox.Show($"Error logging out: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+<<<<<<< HEAD
         }
 
         private void adduserbtn_Click(object sender, EventArgs e)
@@ -224,6 +251,8 @@ namespace CafeManagemnt
         {
             Form AddRole = new RoleCreationForm();
             AddRole.Show();
+=======
+>>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
         }
     }
 }

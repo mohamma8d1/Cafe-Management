@@ -13,4 +13,22 @@ E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.Controls.Main
 E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.AdminForm.resources
 E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.OwnerForm.resources
 E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.StaffForm.resources
+<<<<<<< HEAD
 E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\UserManagementSystem.UserRegistrationForm.resources
+=======
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\bin\Debug\CafeManagemnt.exe.config
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\bin\Debug\CafeManagemnt.exe
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\bin\Debug\CafeManagemnt.pdb
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.AssemblyReference.cache
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.AdminForm.resources
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.Controls.MainButton.resources
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.Controls.MainTextBox.resources
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.Form1.resources
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.OwnerForm.resources
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.Properties.Resources.resources
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.StaffForm.resources
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.GenerateResource.cache
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.CoreCompileInputs.cache
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.exe
+C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.pdb
+>>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
