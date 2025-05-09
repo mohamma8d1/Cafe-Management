@@ -17,6 +17,7 @@ namespace CafeManagemnt.Controls
         //Fields
         private int borderSize = 0;
         private int borderRadius = 0;
+        private CafeManagementDBDataSet cafeManagementDBDataSet1;
         private Color borderColor = Color.White;
 
         //Properties
@@ -152,11 +153,19 @@ namespace CafeManagemnt.Controls
 
         private void InitializeComponent()
         {
+            this.cafeManagementDBDataSet1 = new CafeManagemnt.CafeManagementDBDataSet();
+            ((System.ComponentModel.ISupportInitialize)(this.cafeManagementDBDataSet1)).BeginInit();
             this.SuspendLayout();
+            // 
+            // cafeManagementDBDataSet1
+            // 
+            this.cafeManagementDBDataSet1.DataSetName = "CafeManagementDBDataSet";
+            this.cafeManagementDBDataSet1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // MainButton
             // 
             this.MouseHover += new System.EventHandler(this.MainButton_MouseHover);
+            ((System.ComponentModel.ISupportInitialize)(this.cafeManagementDBDataSet1)).EndInit();
             this.ResumeLayout(false);
 
         }

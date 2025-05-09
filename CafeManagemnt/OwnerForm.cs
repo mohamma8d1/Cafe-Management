@@ -12,7 +12,7 @@ namespace CafeManagemnt
 {
     public partial class OwnerForm: Form
     {
-        public OwnerForm()
+        public OwnerForm(int userid)
         {
             InitializeComponent();
         }

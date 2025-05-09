@@ -110,11 +110,11 @@
             // passwordTxtBox
             // 
             this.passwordTxtBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
-            this.passwordTxtBox.Bordercolor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(224)))));
+            this.passwordTxtBox.Bordercolor = System.Drawing.Color.Gray;
             this.passwordTxtBox.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(224)))), ((int)(((byte)(212)))));
             this.passwordTxtBox.Bordersize = 7;
             this.passwordTxtBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passwordTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(224)))));
+            this.passwordTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.passwordTxtBox.Location = new System.Drawing.Point(412, 444);
             this.passwordTxtBox.Margin = new System.Windows.Forms.Padding(4);
             this.passwordTxtBox.Multiline = false;
@@ -125,15 +125,16 @@
             this.passwordTxtBox.TabIndex = 8;
             this.passwordTxtBox.Texts = "";
             this.passwordTxtBox.Underlinedstyle = true;
+            //this.passwordTxtBox._TextChanged += new System.EventHandler(this.passwordTxtBox__TextChanged);
             // 
             // usernameTxtBox
             // 
             this.usernameTxtBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
-            this.usernameTxtBox.Bordercolor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(224)))));
+            this.usernameTxtBox.Bordercolor = System.Drawing.Color.Gray;
             this.usernameTxtBox.BorderFocusColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(224)))), ((int)(((byte)(212)))));
             this.usernameTxtBox.Bordersize = 7;
             this.usernameTxtBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.usernameTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(224)))));
+            this.usernameTxtBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.usernameTxtBox.Location = new System.Drawing.Point(412, 335);
             this.usernameTxtBox.Margin = new System.Windows.Forms.Padding(4);
             this.usernameTxtBox.Multiline = false;
@@ -164,6 +165,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
             this.Text = "Cafe Management";
+            //this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

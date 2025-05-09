@@ -2,28 +2,28 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-
 
 namespace CafeManagemnt
 {
     public partial class Form1 : Form
     {
-        private const string ConnectionString = @"Data Source=MOHAMMAD-LOQ;Initial Catalog=CafeManagementDB;Integrated Security=True;Encrypt=False";
+        private const string ConnectionString = @"Data Source=MOHAMMAD-LOQ;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
 
         public Form1()
         {
             InitializeComponent();
         }
+
         public static bool CreateUser(string username, string password, string role)
         {
             try
             {
                 string hashedPassword = PasswordHelper.HashPassword(password);
 
-                string query = @"INSERT INTO Login_users 
-                               (username, password_hash, role, status) 
-                               VALUES (@username, @password_hash, @role, '1')";
+                string query = @"INSERT INTO users 
+                               (username, password_hash, role_id, is_active) 
+                               VALUES (@username, @password_hash, 
+                                      (SELECT role_id FROM roles WHERE role_name = @role), 1)";
 
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -48,9 +48,9 @@ namespace CafeManagemnt
             {
                 string hashedPassword = PasswordHelper.HashPassword(newPassword);
 
-                string query = @"UPDATE Login_users 
-                                SET password_hash = @password_hash 
-                                WHERE username = @username";
+                string query = @"UPDATE users 
+                               SET password_hash = @password_hash 
+                               WHERE username = @username";
 
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -67,14 +67,15 @@ namespace CafeManagemnt
                 return false;
             }
         }
+
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            
+            // Empty method, can be removed if not needed
         }
 
         private void ShowLoginError(string message)
         {
-            MessageBox.Show(message, "Login Failed",MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(message, "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             passwordTxtBox.Texts = "";
             usernameTxtBox.Focus();
         }
@@ -101,9 +102,10 @@ namespace CafeManagemnt
                 {
                     connection.Open();
 
-                    string query = @"SELECT username, password_hash, role, status 
-                                   FROM Login_users 
-                                   WHERE username = @username AND status = '1'";
+                    string query = @"SELECT u.user_id, u.username, u.password_hash, r.role_name, u.is_active 
+                                   FROM users u
+                                   JOIN roles r ON u.role_id = r.role_id
+                                   WHERE u.username = @username AND u.is_active = 1";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -113,13 +115,22 @@ namespace CafeManagemnt
                         {
                             if (reader.Read())
                             {
-
                                 string storedHash = reader["password_hash"].ToString();
-                                string role = reader["role"].ToString();
+                                string role = reader["role_name"].ToString();
+                                int userId = Convert.ToInt32(reader["user_id"]);
 
                                 if (PasswordHelper.VerifyPassword(password, storedHash))
                                 {
-                                    OpenRoleSpecificForm(role);
+                                    reader.Close();
+                                    string logQuery = @"INSERT INTO user_logs (user_id, login_time) 
+                                                      VALUES (@user_id, GETDATE())";
+                                    using (SqlCommand logCommand = new SqlCommand(logQuery, connection))
+                                    {
+                                        logCommand.Parameters.AddWithValue("@user_id", userId);
+                                        logCommand.ExecuteNonQuery();
+                                    }
+
+                                    OpenRoleSpecificForm(role, userId);
                                     this.Hide();
                                 }
                                 else
@@ -129,7 +140,7 @@ namespace CafeManagemnt
                             }
                             else
                             {
-                                ShowLoginError("Invalid username or password or Not Active account");
+                                ShowLoginError("Invalid username or password or inactive account");
                             }
                         }
                     }
@@ -145,9 +156,8 @@ namespace CafeManagemnt
             }
         }
 
-        private void OpenRoleSpecificForm(string role)
+        private void OpenRoleSpecificForm(string role, int userId)
         {
-            // First hide the login form
             this.Hide();
             try
             {
@@ -156,15 +166,15 @@ namespace CafeManagemnt
                 switch (role.ToLower())
                 {
                     case "admin":
-                        roleForm = new AdminForm();
+                        roleForm = new AdminForm(userId);
                         break;
 
                     case "owner":
-                        roleForm = new OwnerForm();
+                        roleForm = new OwnerForm(userId);
                         break;
 
-                    case "staff":
-                        roleForm = new StaffForm();
+                    case "employee":
+                        roleForm = new StaffForm(userId);
                         break;
 
                     default:
@@ -187,3 +197,4 @@ namespace CafeManagemnt
         }
     }
 }
+
