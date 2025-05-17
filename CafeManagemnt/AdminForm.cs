@@ -188,11 +188,6 @@ namespace CafeManagemnt
 
         private void AdminForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-=======
-        private void AdminForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            // Show confirmation message
->>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
             DialogResult result = MessageBox.Show(
                 "Are you sure you want to close and log out?",
                 "Confirm Exit",
