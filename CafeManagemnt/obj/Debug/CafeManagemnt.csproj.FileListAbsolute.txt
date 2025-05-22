@@ -32,3 +32,19 @@ C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.Cor
 C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.exe
 C:\Users\LENOVO\Desktop\Term\SE\CafeManagemnt\obj\Debug\CafeManagemnt.pdb
 >>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.AssemblyReference.cache
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.AdminForm.resources
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.Controls.MainButton.resources
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.Controls.MainTextBox.resources
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.Form1.resources
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.OwnerForm.resources
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.Properties.Resources.resources
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.StaffForm.resources
+D:\CafeManagement files\CafeManagemnt\obj\Debug\UserManagementSystem.UserRegistrationForm.resources
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.GenerateResource.cache
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.CoreCompileInputs.cache
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.exe
+D:\CafeManagement files\CafeManagemnt\obj\Debug\CafeManagemnt.pdb
+D:\CafeManagement files\CafeManagemnt\bin\Debug\CafeManagemnt.exe.config
+D:\CafeManagement files\CafeManagemnt\bin\Debug\CafeManagemnt.exe
+D:\CafeManagement files\CafeManagemnt\bin\Debug\CafeManagemnt.pdb
