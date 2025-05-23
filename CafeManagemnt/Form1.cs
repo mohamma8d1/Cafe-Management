@@ -7,11 +7,7 @@ namespace CafeManagemnt
 {
     public partial class Form1 : Form
     {
-<<<<<<< HEAD
-        private const string ConnectionString = @"Data Source=MOHAMMAD-LOQ;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
-=======
-        private const string ConnectionString = @"Data Source=DESKTOP-5D6TADI;Initial Catalog=CafeManagementDB;Integrated Security=True;Encrypt=False";
->>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
+        private const string ConnectionString = @"Data Source=.;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
 
         public Form1()
         {

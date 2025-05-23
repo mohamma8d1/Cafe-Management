@@ -6,14 +6,10 @@ namespace CafeManagemnt
 {
     public partial class OwnerForm : Form
     {
-<<<<<<< HEAD
-        public OwnerForm(int userid)
-=======
         private readonly int _userId;
         private const string ConnectionString = @"Data Source=DESKTOP-5D6TADI;Initial Catalog=CafeManagementDB;Integrated Security=True;Encrypt=False";
 
         public OwnerForm(int userId)
->>>>>>> 55bee5d255f6c769e075085d9427a6bfab71bf76
         {
             InitializeComponent();
             _userId = userId;

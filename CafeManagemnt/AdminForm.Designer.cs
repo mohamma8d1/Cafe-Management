@@ -1,16 +1,11 @@
-﻿namespace CafeManagemnt
+﻿using System.Windows.Forms;
+
+namespace CafeManagemnt
 {
     partial class AdminForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,10 +17,6 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             this.CafeTitle = new System.Windows.Forms.Label();
@@ -37,7 +28,7 @@
             this.Backupbtn = new CafeManagemnt.Controls.MainButton();
             this.UserShowbtn = new CafeManagemnt.Controls.MainButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.adduserbtn = new CafeManagemnt.Controls.MainButton();
+            this.Adduserbtn = new CafeManagemnt.Controls.MainButton();
             this.AddRolebtn = new CafeManagemnt.Controls.MainButton();
             this.Header.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -108,6 +99,7 @@
             this.Reportbtn.Text = "Report";
             this.Reportbtn.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
             this.Reportbtn.UseVisualStyleBackColor = false;
+            this.Reportbtn.Click += new System.EventHandler(this.Reportbtn_Click);
             // 
             // Restorebtn
             // 
@@ -127,6 +119,7 @@
             this.Restorebtn.Text = "Restore";
             this.Restorebtn.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
             this.Restorebtn.UseVisualStyleBackColor = false;
+            this.Restorebtn.Click += new System.EventHandler(this.Restorebtn_Click);
             // 
             // Backupbtn
             // 
@@ -146,6 +139,7 @@
             this.Backupbtn.Text = "Backup";
             this.Backupbtn.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
             this.Backupbtn.UseVisualStyleBackColor = false;
+            this.Backupbtn.Click += new System.EventHandler(this.Backupbtn_Click);
             // 
             // UserShowbtn
             // 
@@ -176,26 +170,26 @@
             this.dataGridView1.TabIndex = 3;
             this.dataGridView1.Visible = false;
             // 
-            // adduserbtn
+            // Adduserbtn
             // 
-            this.adduserbtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
-            this.adduserbtn.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
-            this.adduserbtn.BorderColor = System.Drawing.Color.White;
-            this.adduserbtn.BorderRadius = 20;
-            this.adduserbtn.BorderSize = 0;
-            this.adduserbtn.FlatAppearance.BorderSize = 0;
-            this.adduserbtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.adduserbtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.adduserbtn.ForeColor = System.Drawing.Color.White;
-            this.adduserbtn.Location = new System.Drawing.Point(369, 594);
-            this.adduserbtn.Name = "adduserbtn";
-            this.adduserbtn.Size = new System.Drawing.Size(168, 60);
-            this.adduserbtn.TabIndex = 4;
-            this.adduserbtn.Text = "Add User";
-            this.adduserbtn.TextColor = System.Drawing.Color.White;
-            this.adduserbtn.UseVisualStyleBackColor = false;
-            this.adduserbtn.Visible = false;
-            this.adduserbtn.Click += new System.EventHandler(this.adduserbtn_Click);
+            this.Adduserbtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.Adduserbtn.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.Adduserbtn.BorderColor = System.Drawing.Color.White;
+            this.Adduserbtn.BorderRadius = 20;
+            this.Adduserbtn.BorderSize = 0;
+            this.Adduserbtn.FlatAppearance.BorderSize = 0;
+            this.Adduserbtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Adduserbtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Adduserbtn.ForeColor = System.Drawing.Color.White;
+            this.Adduserbtn.Location = new System.Drawing.Point(369, 594);
+            this.Adduserbtn.Name = "Adduserbtn";
+            this.Adduserbtn.Size = new System.Drawing.Size(168, 60);
+            this.Adduserbtn.TabIndex = 4;
+            this.Adduserbtn.Text = "Add User";
+            this.Adduserbtn.TextColor = System.Drawing.Color.White;
+            this.Adduserbtn.UseVisualStyleBackColor = false;
+            this.Adduserbtn.Visible = false;
+            this.Adduserbtn.Click += new System.EventHandler(this.Adduserbtn_Click);
             // 
             // AddRolebtn
             // 
@@ -225,7 +219,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
             this.ClientSize = new System.Drawing.Size(1085, 676);
             this.Controls.Add(this.AddRolebtn);
-            this.Controls.Add(this.adduserbtn);
+            this.Controls.Add(this.Adduserbtn);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.Header);
@@ -242,6 +236,13 @@
 
         #endregion
 
+        private Panel reportPanel;
+        private ComboBox reportTypeComboBox;
+        private DateTimePicker fromDatePicker;
+        private DateTimePicker toDatePicker;
+        private Controls.MainButton generateReportButton;
+        private DataGridView reportDataGridView;
+        private Controls.MainButton exportReportButton;
         private System.Windows.Forms.Label CafeTitle;
         private System.Windows.Forms.Panel Header;
         private System.Windows.Forms.Label username;
@@ -251,7 +252,7 @@
         private Controls.MainButton Restorebtn;
         private Controls.MainButton Backupbtn;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private Controls.MainButton adduserbtn;
+        private Controls.MainButton Adduserbtn;
         private Controls.MainButton AddRolebtn;
     }
 }
