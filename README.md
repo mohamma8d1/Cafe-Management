@@ -109,7 +109,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 ## 📜 License
 
-Distributed under the [MIT License](https://choosealicense.com/licenses/mit/). See `LICENSE.txt` for more information. (You'll need to add a `LICENSE.txt` file with the MIT License text if you choose this license).
+We have not chosen this one yet. :)
 
 ---
 
