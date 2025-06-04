@@ -1,6 +1,7 @@
-![image](https://github.com/user-attachments/assets/4c76f261-badb-46ea-be52-b23ff03f0617)# Cafe Management System
+[Cafe Management]
 
-![Cafe Management System Logo or Key Screenshot]([link_to_your_logo_or_main_screenshot_here])
+
+![image](https://github.com/user-attachments/assets/4c76f261-badb-46ea-be52-b23ff03f0617)# Cafe Management System
 
 > A comprehensive desktop application built with C# Windows Forms to efficiently manage all aspects of a cafe, from order taking and table management to inventory and billing.
 
