@@ -76,7 +76,7 @@ Follow these steps to get a local copy of the Cafe Management System up and runn
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/](https://github.com/)[your-github-username]/[your-cafe-management-repo-name].git
+    https://github.com/mohamma8d1/Cafe-Management.git
     ```
 2.  **Open the solution file:**
     Navigate to the cloned project directory and open the `.sln` file (e.g., `CafeManagement.sln`) with Visual Studio.
@@ -117,7 +117,7 @@ We have not chosen this one yet. :)
 
 [Mohammad Reza Mirnoori] - [mmmirnoori@gmail.com]
 
-Project Link: [[https://github.com/[your-github-username]/[your-cafe-management-repo-name]](https://github.com/mohamma8d1/Cafe-Management)]
+Project Link: [(https://github.com/mohamma8d1/Cafe-Management.git)]
 
 ---
 
