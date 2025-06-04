@@ -395,42 +395,35 @@ namespace CafeManagemnt
             }
         }
 
+
         private void GenerateInventoryReport(DateTime fromDate, DateTime toDate)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                // Query to get inventory with product names - showing only important details
+                // Simple and clean query - this should show product names
                 string query = @"
             SELECT 
-                CASE
-                    WHEN p.product_name IS NOT NULL THEN p.product_name
-                    WHEN i.item_name IS NOT NULL THEN i.item_name
-                    ELSE 'Product ID: ' + CAST(i.product_id AS VARCHAR(10))
-                END AS ProductName,
+                COALESCE(p.product_name, 'Product ID: ' + CAST(i.product_id AS VARCHAR(10))) AS ProductName,
                 i.quantity_in_stock AS CurrentStock,
-                i.reorder_level AS ReorderLevel,
+                i.minimum_stock_level AS ReorderLevel,
                 CASE 
-                    WHEN i.quantity_in_stock <= i.reorder_level THEN 'Reorder Required'
-                    WHEN i.quantity_in_stock <= (i.reorder_level * 1.5) THEN 'Low Stock'
+                    WHEN i.quantity_in_stock <= i.minimum_stock_level THEN 'Reorder Required'
+                    WHEN i.quantity_in_stock <= (i.minimum_stock_level * 1.5) THEN 'Low Stock'
                     ELSE 'In Stock'
                 END AS Status,
-                i.unit_price AS UnitPrice
+                FORMAT(COALESCE(p.unit_price, 0), 'C') AS UnitPrice,
+                i.product_id AS ProductID
             FROM 
-                inventory i
-                LEFT JOIN products p ON i.product_id = p.product_id
-                /* If you need to filter by date, add a WHERE clause here */
-                /* WHERE i.last_updated BETWEEN @fromDate AND @toDate */
+                dbo.inventory i
+                LEFT JOIN dbo.products p ON i.product_id = p.product_id
+            WHERE i.is_active = 1  -- Only show active items
             ORDER BY 
                 CASE 
-                    WHEN i.quantity_in_stock <= i.reorder_level THEN 1
-                    WHEN i.quantity_in_stock <= (i.reorder_level * 1.5) THEN 2
+                    WHEN i.quantity_in_stock <= i.minimum_stock_level THEN 1
+                    WHEN i.quantity_in_stock <= (i.minimum_stock_level * 1.5) THEN 2
                     ELSE 3
                 END,
-                CASE
-                    WHEN p.product_name IS NOT NULL THEN p.product_name
-                    WHEN i.item_name IS NOT NULL THEN i.item_name
-                    ELSE CAST(i.product_id AS VARCHAR(10))
-                END";
+                p.product_name";
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                 DataTable dataTable = new DataTable();
@@ -438,142 +431,45 @@ namespace CafeManagemnt
                 try
                 {
                     adapter.Fill(dataTable);
-                }
-                catch (SqlException ex)
-                {
-                    // If the above query fails, try alternative approaches
-                    if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("Invalid column name"))
+
+                    if (dataTable.Rows.Count > 0)
                     {
-                        // Try without products table join
-                        try
-                        {
-                            query = @"
-                        SELECT 
-                            p.product_name AS ProductName,
-                            i.quantity_in_stock AS CurrentStock,
-                            i.reorder_level AS ReorderLevel,
-                            CASE 
-                                WHEN i.quantity_in_stock <= i.reorder_level THEN 'Reorder Required'
-                                WHEN i.quantity_in_stock <= (i.reorder_level * 1.5) THEN 'Low Stock'
-                                ELSE 'In Stock'
-                            END AS Status,
-                            i.unit_price AS UnitPrice
-                        FROM 
-                            inventory i
-                            LEFT JOIN products p ON i.product_id = p.product_id
-                        ORDER BY 
-                            CASE 
-                                WHEN i.quantity_in_stock <= i.reorder_level THEN 1
-                                WHEN i.quantity_in_stock <= (i.reorder_level * 1.5) THEN 2
-                                ELSE 3
-                            END,
-                            p.product_name";
+                        // No need for currency formatting since it's done in SQL
+                        // foreach (DataRow row in dataTable.Rows)
+                        // {
+                        //     // Currency formatting handled in SQL query
+                        // }
 
-                            adapter = new SqlDataAdapter(query, connection);
-                            adapter.Fill(dataTable);
-                        }
-                        catch (SqlException ex2)
-                        {
-                            // Last resort - get all columns and format them
-                            query = @"SELECT * FROM inventory";
-                            adapter = new SqlDataAdapter(query, connection);
-                            adapter.Fill(dataTable);
+                        reportDataGridView.DataSource = dataTable;
 
-                            // Filter to show only important columns
-                            DataTable filteredTable = new DataTable();
-                            filteredTable.Columns.Add("ProductName", typeof(string));
-                            filteredTable.Columns.Add("CurrentStock", typeof(int));
-                            filteredTable.Columns.Add("Status", typeof(string));
-                            filteredTable.Columns.Add("UnitPrice", typeof(string));
+                        // Hide the ProductID column (we're keeping it for reference but not showing it)
+                        if (reportDataGridView.Columns["ProductID"] != null)
+                            reportDataGridView.Columns["ProductID"].Visible = false;
 
-                            foreach (DataRow row in dataTable.Rows)
-                            {
-                                DataRow newRow = filteredTable.NewRow();
+                        // Apply color formatting for status column
+                        reportDataGridView.CellFormatting -= ReportDataGridView_CellFormatting;
+                        reportDataGridView.CellFormatting += ReportDataGridView_CellFormatting;
 
-                                // Get product name from available columns
-                                string productName = "Unknown Product";
-                                if (dataTable.Columns.Contains("item_name") && row["item_name"] != DBNull.Value)
-                                    productName = row["item_name"].ToString();
-                                else if (dataTable.Columns.Contains("product_name") && row["product_name"] != DBNull.Value)
-                                    productName = row["product_name"].ToString();
-                                else if (dataTable.Columns.Contains("inventory_id"))
-                                    productName = "Item ID: " + row["inventory_id"].ToString();
-
-                                newRow["ProductName"] = productName;
-
-                                // Get stock quantity
-                                int currentStock = 0;
-                                if (dataTable.Columns.Contains("quantity_in_stock") && row["quantity_in_stock"] != DBNull.Value)
-                                    int.TryParse(row["quantity_in_stock"].ToString(), out currentStock);
-                                else if (dataTable.Columns.Contains("current_stock") && row["current_stock"] != DBNull.Value)
-                                    int.TryParse(row["current_stock"].ToString(), out currentStock);
-
-                                newRow["CurrentStock"] = currentStock;
-
-                                // Determine status
-                                int reorderLevel = 0;
-                                if (dataTable.Columns.Contains("reorder_level") && row["reorder_level"] != DBNull.Value)
-                                    int.TryParse(row["reorder_level"].ToString(), out reorderLevel);
-
-                                string status = "In Stock";
-                                if (reorderLevel > 0)
-                                {
-                                    if (currentStock <= reorderLevel)
-                                        status = "Reorder Required";
-                                    else if (currentStock <= (reorderLevel * 1.5))
-                                        status = "Low Stock";
-                                }
-                                newRow["Status"] = status;
-
-                                // Get unit price
-                                string unitPrice = "N/A";
-                                if (dataTable.Columns.Contains("unit_price") && row["unit_price"] != DBNull.Value)
-                                {
-                                    if (decimal.TryParse(row["unit_price"].ToString(), out decimal price))
-                                        unitPrice = string.Format("{0:C}", price);
-                                }
-                                newRow["UnitPrice"] = unitPrice;
-
-                                filteredTable.Rows.Add(newRow);
-                            }
-
-                            dataTable = filteredTable;
-                        }
+                        // Optional: Set column headers to be more user-friendly
+                        reportDataGridView.Columns["ProductName"].HeaderText = "Product Name";
+                        reportDataGridView.Columns["CurrentStock"].HeaderText = "Current Stock";
+                        reportDataGridView.Columns["ReorderLevel"].HeaderText = "Reorder Level";
+                        reportDataGridView.Columns["Status"].HeaderText = "Status";
+                        reportDataGridView.Columns["UnitPrice"].HeaderText = "Unit Price";
                     }
                     else
                     {
-                        throw;
+                        MessageBox.Show("No inventory data found.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        reportDataGridView.DataSource = null;
                     }
                 }
-
-                if (dataTable.Rows.Count > 0)
+                catch (SqlException ex)
                 {
-                    // Format currency columns if not already formatted
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        if (dataTable.Columns.Contains("UnitPrice") && row["UnitPrice"] != DBNull.Value)
-                        {
-                            string priceStr = row["UnitPrice"].ToString();
-                            if (!priceStr.StartsWith("$") && !priceStr.Contains("N/A"))
-                            {
-                                if (decimal.TryParse(priceStr, out decimal price))
-                                {
-                                    row["UnitPrice"] = string.Format("{0:C}", price);
-                                }
-                            }
-                        }
-                    }
-
-                    reportDataGridView.DataSource = dataTable;
-
-                    // Apply color formatting for status column
-                    reportDataGridView.CellFormatting -= ReportDataGridView_CellFormatting; // Remove previous handler
-                    reportDataGridView.CellFormatting += ReportDataGridView_CellFormatting;
+                    MessageBox.Show($"Database error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("No inventory data found.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    reportDataGridView.DataSource = null;
+                    MessageBox.Show($"Error generating report: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

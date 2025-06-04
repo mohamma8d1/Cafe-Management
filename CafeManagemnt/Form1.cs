@@ -13,7 +13,6 @@ namespace CafeManagemnt
         {
             InitializeComponent();
         }
-
         public static bool CreateUser(string username, string password, string role)
         {
             try

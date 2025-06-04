@@ -62,11 +62,11 @@ namespace CafeManagemnt
             this.username.AutoSize = true;
             this.username.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.username.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
-            this.username.Location = new System.Drawing.Point(897, 31);
+            this.username.Location = new System.Drawing.Point(950, 31);
             this.username.Name = "username";
-            this.username.Size = new System.Drawing.Size(91, 20);
+            this.username.Size = new System.Drawing.Size(59, 20);
             this.username.TabIndex = 1;
-            this.username.Text = "Username";
+            this.username.Text = "Admin";
             // 
             // panel1
             // 
