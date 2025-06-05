@@ -17,7 +17,7 @@ namespace CafeManagemnt
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new OwnerForm(1));
+            Application.Run(new Form1());
         }
     }
 }

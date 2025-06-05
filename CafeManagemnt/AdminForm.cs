@@ -13,6 +13,11 @@ namespace CafeManagemnt
         private readonly int _userId;
         private const string _connectionString = @"Data Source=.;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
         private DataTable _dataTable;
+
+
+
+
+
         public AdminForm(int userId)
         {
             InitializeComponent();
@@ -241,7 +246,7 @@ namespace CafeManagemnt
                 ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize,
                 Location = new System.Drawing.Point(20, 120),
                 Name = "reportDataGridView",
-                Size = new System.Drawing.Size(630, 320),
+                Size = new System.Drawing.Size(630, 280), // Reduced height to make room for export button
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 BackgroundColor = System.Drawing.Color.White,
                 RowTemplate = { Height = 30 },
@@ -252,7 +257,7 @@ namespace CafeManagemnt
                 AllowUserToDeleteRows = false
             };
 
-            // Create export report button (positioned like AddRolebtn)
+            // Create export report button - POSITIONED INSIDE THE PANEL
             exportReportButton = new Controls.MainButton
             {
                 BackColor = System.Drawing.Color.FromArgb(67, 40, 24),
@@ -264,9 +269,9 @@ namespace CafeManagemnt
                 FlatStyle = System.Windows.Forms.FlatStyle.Flat,
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold),
                 ForeColor = System.Drawing.Color.White,
-                Location = new System.Drawing.Point(475, 486), // Positioned relative to form, not panel
+                Location = new System.Drawing.Point(480, 410), // Position inside panel, below the grid
                 Name = "exportReportButton",
-                Size = new System.Drawing.Size(168, 60),
+                Size = new System.Drawing.Size(168, 50),
                 Text = "Export Excel",
                 TextColor = System.Drawing.Color.White,
                 UseVisualStyleBackColor = false,
@@ -274,7 +279,7 @@ namespace CafeManagemnt
             };
             exportReportButton.Click += ExportReportButton_Click;
 
-            // Add controls to report panel
+            // Add controls to report panel - INCLUDING THE EXPORT BUTTON
             reportPanel.Controls.Add(reportTypeLabel);
             reportPanel.Controls.Add(reportTypeComboBox);
             reportPanel.Controls.Add(fromDateLabel);
@@ -283,68 +288,80 @@ namespace CafeManagemnt
             reportPanel.Controls.Add(toDatePicker);
             reportPanel.Controls.Add(generateReportButton);
             reportPanel.Controls.Add(reportDataGridView);
+            reportPanel.Controls.Add(exportReportButton); // Add export button to panel
 
-            // Add report panel and export button to form
+            // Add report panel to form (don't add export button separately)
             Controls.Add(reportPanel);
-            Controls.Add(exportReportButton);
         }
 
+
         // Add this method to handle report generation
+        // Also update the GenerateReportButton_Click method to properly show the export button:
         private void GenerateReportButton_Click(object sender, EventArgs e)
+        {
+            if (reportTypeComboBox.SelectedItem == null)
             {
-                if (reportTypeComboBox.SelectedItem == null)
-                {
-                    MessageBox.Show("Please select a report type.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                string reportType = reportTypeComboBox.SelectedItem.ToString();
-                DateTime fromDate = fromDatePicker.Value.Date;
-                DateTime toDate = toDatePicker.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-                if (fromDate > toDate)
-                {
-                    MessageBox.Show("From Date cannot be after To Date.", "Invalid Date Range", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                try
-                {
-                    Cursor = Cursors.WaitCursor;
-
-                    switch (reportType)
-                    {
-                        case "Sales Report":
-                            GenerateSalesReport(fromDate, toDate);
-                            break;
-                        case "Inventory Report":
-                            GenerateInventoryReport(fromDate, toDate);
-                            break;
-                        case "User Activity Report":
-                            GenerateUserActivityReport(fromDate, toDate);
-                            break;
-                        case "Popular Items Report":
-                            GeneratePopularItemsReport(fromDate, toDate);
-                            break;
-                        default:
-                            MessageBox.Show("Invalid report type selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            break;
-                    }
-
-                    exportReportButton.Visible = reportDataGridView.Rows.Count > 0;
-                    LogOperation("Report Generation", $"Generated {reportType} from {fromDate.ToShortDateString()} to {toDate.ToShortDateString()}");
-                }
-                catch (Exception ex)
-                {
-                    LogError(ex);
-                    MessageBox.Show($"Error generating report: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    Cursor = Cursors.Default;
-                }
+                MessageBox.Show("Please select a report type.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
+            string reportType = reportTypeComboBox.SelectedItem.ToString();
+            DateTime fromDate = fromDatePicker.Value.Date;
+            DateTime toDate = toDatePicker.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            if (fromDate > toDate)
+            {
+                MessageBox.Show("From Date cannot be after To Date.", "Invalid Date Range", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                switch (reportType)
+                {
+                    case "Sales Report":
+                        GenerateSalesReport(fromDate, toDate);
+                        break;
+                    case "Inventory Report":
+                        GenerateInventoryReport(fromDate, toDate);
+                        break;
+                    case "User Activity Report":
+                        GenerateUserActivityReport(fromDate, toDate);
+                        break;
+                    case "Popular Items Report":
+                        GeneratePopularItemsReport(fromDate, toDate);
+                        break;
+                    default:
+                        MessageBox.Show("Invalid report type selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                }
+
+                // Show export button if data exists
+                if (reportDataGridView.DataSource != null && reportDataGridView.Rows.Count > 0)
+                {
+                    exportReportButton.Visible = true;
+                    exportReportButton.BringToFront(); // Ensure it's visible on top
+                }
+                else
+                {
+                    exportReportButton.Visible = false;
+                }
+
+                LogOperation("Report Generation", $"Generated {reportType} from {fromDate.ToShortDateString()} to {toDate.ToShortDateString()}");
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                MessageBox.Show($"Error generating report: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                exportReportButton.Visible = false;
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
         // Replace your existing report generation methods with these corrected versions
 
         private void GenerateSalesReport(DateTime fromDate, DateTime toDate)
@@ -434,23 +451,14 @@ namespace CafeManagemnt
 
                     if (dataTable.Rows.Count > 0)
                     {
-                        // No need for currency formatting since it's done in SQL
-                        // foreach (DataRow row in dataTable.Rows)
-                        // {
-                        //     // Currency formatting handled in SQL query
-                        // }
-
                         reportDataGridView.DataSource = dataTable;
 
-                        // Hide the ProductID column (we're keeping it for reference but not showing it)
                         if (reportDataGridView.Columns["ProductID"] != null)
                             reportDataGridView.Columns["ProductID"].Visible = false;
 
-                        // Apply color formatting for status column
                         reportDataGridView.CellFormatting -= ReportDataGridView_CellFormatting;
                         reportDataGridView.CellFormatting += ReportDataGridView_CellFormatting;
 
-                        // Optional: Set column headers to be more user-friendly
                         reportDataGridView.Columns["ProductName"].HeaderText = "Product Name";
                         reportDataGridView.Columns["CurrentStock"].HeaderText = "Current Stock";
                         reportDataGridView.Columns["ReorderLevel"].HeaderText = "Reorder Level";
