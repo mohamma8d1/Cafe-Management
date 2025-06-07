@@ -104,6 +104,12 @@
     <Compile Include="Controls\MainTextBox.Designer.cs">
       <DependentUpon>MainTextBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditStaffForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditStaffForm.Designer.cs">
+      <DependentUpon>EditStaffForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -152,6 +158,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MainTextBox.resx">
       <DependentUpon>MainTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditStaffForm.resx">
+      <DependentUpon>EditStaffForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

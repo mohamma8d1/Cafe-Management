@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using UserManagementSystem;
 
-
 namespace CafeManagemnt
 {
     public partial class OwnerForm : Form
@@ -21,11 +20,11 @@ namespace CafeManagemnt
             _userId = userId; // Set user ID
             this.FormClosing += OwnerForm_FormClosing; // Attach form closing event handler
             dataGridView1.Visible = false; // Initially hide DataGridView
+            Backtostaff.Visible = false;
         }
 
         private void OwnerForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Show confirmation dialog for closing the form
             DialogResult result = MessageBox.Show(
                 "Are you sure you want to close and log out?",
                 "Confirm Exit",
@@ -35,12 +34,10 @@ namespace CafeManagemnt
 
             if (result == DialogResult.No)
             {
-                // Cancel form closing if user selects No
                 e.Cancel = true;
                 return;
             }
 
-            // Log logout time in the database
             try
             {
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
@@ -58,14 +55,12 @@ namespace CafeManagemnt
             }
             catch (Exception ex)
             {
-                // Show error message if logging out fails
                 MessageBox.Show($"Error logging out: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void LoadData()
         {
-            // Load user data from the database
             try
             {
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
@@ -86,17 +81,17 @@ namespace CafeManagemnt
                     SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                     _dataTable = new DataTable();
                     adapter.Fill(_dataTable);
+                    dataGridView1.DataSource = null;
+                    dataGridView1.Columns.Clear();
                     dataGridView1.DataSource = _dataTable;
                     SetupDataGridView();
 
-                    // Format the Last Login column
                     if (dataGridView1.Columns["Last Login"] != null)
                     {
                         dataGridView1.Columns["Last Login"].DefaultCellStyle.Format = "yyyy/MM/dd HH:mm:ss";
                         dataGridView1.Columns["Last Login"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
                     }
 
-                    // Set column widths
                     if (dataGridView1.Columns["User ID"] != null)
                         dataGridView1.Columns["User ID"].Width = 80;
                     if (dataGridView1.Columns["Username"] != null)
@@ -109,14 +104,12 @@ namespace CafeManagemnt
             }
             catch (Exception ex)
             {
-                // Show error message if data loading fails
-                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading user data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void LoadInventoryData()
         {
-            // Load inventory data from the database
             try
             {
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
@@ -139,10 +132,11 @@ namespace CafeManagemnt
                     SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                     _inventoryDataTable = new DataTable();
                     adapter.Fill(_inventoryDataTable);
+                    dataGridView1.DataSource = null;
+                    dataGridView1.Columns.Clear();
                     dataGridView1.DataSource = _inventoryDataTable;
                     SetupDataGridView();
 
-                    // Set column widths for inventory
                     if (dataGridView1.Columns["Product ID"] != null)
                         dataGridView1.Columns["Product ID"].Width = 80;
                     if (dataGridView1.Columns["Product Name"] != null)
@@ -154,7 +148,6 @@ namespace CafeManagemnt
                     if (dataGridView1.Columns["Total Sales"] != null)
                         dataGridView1.Columns["Total Sales"].Width = 100;
 
-                    // display with $
                     if (dataGridView1.Columns["Unit Price"] != null)
                     {
                         dataGridView1.Columns["Unit Price"].DefaultCellStyle.Format = "0.00 $";
@@ -169,37 +162,113 @@ namespace CafeManagemnt
             }
             catch (Exception ex)
             {
-                // Show error message if inventory data loading fails
-                MessageBox.Show("Failed to load inventory data. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading inventory data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadStaffData(bool includeEditDisableButtons = false)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                {
+                    string query = @"SELECT u.user_id AS 'User ID', u.username AS 'Username', 
+                                   e.salary AS 'Salary', 
+                                   ul.login_time AS 'Last Login', 
+                                   ul.logout_time AS 'Last Logout'
+                                   FROM users u
+                                   INNER JOIN employees e ON u.user_id = e.user_id
+                                   LEFT JOIN (
+                                       SELECT user_id, 
+                                              MAX(login_time) AS login_time,
+                                              MAX(logout_time) AS logout_time
+                                       FROM user_logs
+                                       GROUP BY user_id
+                                   ) ul ON u.user_id = ul.user_id
+                                   WHERE u.is_active = 1";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                    _dataTable = new DataTable();
+                    adapter.Fill(_dataTable);
+                    dataGridView1.DataSource = null;
+                    dataGridView1.Columns.Clear();
+                    dataGridView1.DataSource = _dataTable;
+
+                    if (includeEditDisableButtons)
+                    {
+                        DataGridViewButtonColumn editButtonColumn = new DataGridViewButtonColumn
+                        {
+                            Name = "Edit",
+                            HeaderText = "Edit",
+                            Text = "Edit",
+                            UseColumnTextForButtonValue = true,
+                            Width = 80
+                        };
+                        dataGridView1.Columns.Add(editButtonColumn);
+
+                        DataGridViewButtonColumn disableButtonColumn = new DataGridViewButtonColumn
+                        {
+                            Name = "Fire",
+                            HeaderText = "Fire",
+                            Text = "Fire",
+                            UseColumnTextForButtonValue = true,
+                            Width = 80
+                        };
+                        dataGridView1.Columns.Add(disableButtonColumn);
+                    }
+
+                    SetupDataGridView();
+
+                    if (dataGridView1.Columns["Last Login"] != null)
+                    {
+                        dataGridView1.Columns["Last Login"].DefaultCellStyle.Format = "yyyy/MM/dd HH:mm:ss";
+                        dataGridView1.Columns["Last Login"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                        dataGridView1.Columns["Last Login"].Width = 150;
+                    }
+
+                    if (dataGridView1.Columns["Last Logout"] != null)
+                    {
+                        dataGridView1.Columns["Last Logout"].DefaultCellStyle.Format = "yyyy/MM/dd HH:mm:ss";
+                        dataGridView1.Columns["Last Logout"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                        dataGridView1.Columns["Last Logout"].Width = 150;
+                    }
+
+                    if (dataGridView1.Columns["Salary"] != null)
+                    {
+                        dataGridView1.Columns["Salary"].DefaultCellStyle.Format = "0.00 $";
+                        dataGridView1.Columns["Salary"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                        dataGridView1.Columns["Salary"].Width = 100;
+                    }
+
+                    if (dataGridView1.Columns["User ID"] != null)
+                        dataGridView1.Columns["User ID"].Width = 80;
+                    if (dataGridView1.Columns["Username"] != null)
+                        dataGridView1.Columns["Username"].Width = 120;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading staff data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void SetupDataGridView()
         {
-            // Set row height
             dataGridView1.RowTemplate.Height = 35;
-
-            // Set default cell styles
             dataGridView1.DefaultCellStyle.BackColor = Color.White;
             dataGridView1.DefaultCellStyle.ForeColor = Color.Black;
             dataGridView1.DefaultCellStyle.SelectionBackColor = Color.White;
             dataGridView1.DefaultCellStyle.SelectionForeColor = Color.Black;
-
-            // Set alternating row styles
             dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(176, 137, 104);
             dataGridView1.AlternatingRowsDefaultCellStyle.ForeColor = Color.Black;
             dataGridView1.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(176, 137, 104);
             dataGridView1.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.Black;
-
-            // Set header styles
             dataGridView1.EnableHeadersVisualStyles = false;
             dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(176, 137, 104);
             dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
             dataGridView1.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(176, 137, 104);
             dataGridView1.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.Black;
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-
-            // Set other DataGridView properties
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.DefaultCellStyle.Font = new Font("Segoe UI", 12F);
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -214,25 +283,26 @@ namespace CafeManagemnt
 
         private void UserShowbtn_Click(object sender, EventArgs e)
         {
-            // Load and display user data
-
             LoadData();
             Newstaff_btn.Visible = false;
             Stafflist_btn.Visible = false;
             EFstaff_btn.Visible = false;
-
             dataGridView1.Visible = true;
+            Backtostaff.Visible = false;
+
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
 
         private void InventoryManagement_btn_Click(object sender, EventArgs e)
         {
-            // Load and display inventory data
             LoadInventoryData();
             Newstaff_btn.Visible = false;
             Stafflist_btn.Visible = false;
             EFstaff_btn.Visible = false;
-
             dataGridView1.Visible = true;
+            Backtostaff.Visible = false;
+
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
 
         private void StaffManagement_btn_Click(object sender, EventArgs e)
@@ -241,37 +311,147 @@ namespace CafeManagemnt
             Newstaff_btn.Visible = true;
             Stafflist_btn.Visible = true;
             EFstaff_btn.Visible = true;
+            Backtostaff.Visible = false;
 
-
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
 
         private void MenuManagement_btn_Click(object sender, EventArgs e)
         {
-
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
 
         private void Report_btn_Click(object sender, EventArgs e)
         {
-
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
 
         private void Newstaff_btn_Click(object sender, EventArgs e)
         {
             Newstaff_form newStaffForm = new Newstaff_form();
             newStaffForm.ShowDialog();
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
-
 
         private void Stafflist_btn_Click(object sender, EventArgs e)
         {
+            LoadStaffData(); // Load without Edit/Fire buttons
+            Newstaff_btn.Visible = false;
+            Stafflist_btn.Visible = false;
+            EFstaff_btn.Visible = false;
+            dataGridView1.Visible = true;
+            Backtostaff.Visible = true;
 
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
 
         private void Editstaff_btn_Click(object sender, EventArgs e)
         {
+            LoadStaffData(includeEditDisableButtons: true); // Load with Edit/Fire buttons
+            Newstaff_btn.Visible = false;
+            Stafflist_btn.Visible = false;
+            EFstaff_btn.Visible = false;
+            dataGridView1.Visible = true;
+            Backtostaff.Visible = true;
 
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
+            dataGridView1.CellContentClick += DataGridView1_CellContentClick;
         }
 
+        private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return; // Ignore header clicks
 
+            string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
+
+            // Check if User ID column exists and has a valid value
+            if (dataGridView1.Rows[e.RowIndex].Cells["User ID"].Value == null)
+            {
+                MessageBox.Show("Invalid user ID.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int userId;
+            try
+            {
+                userId = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["User ID"].Value);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error retrieving user ID: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string username = dataGridView1.Rows[e.RowIndex].Cells["Username"].Value?.ToString() ?? "Unknown";
+
+            if (columnName == "Edit")
+            {
+                try
+                {
+                    EditStaffForm editForm = new EditStaffForm(userId);
+                    editForm.ShowDialog();
+                    LoadStaffData(includeEditDisableButtons: true); // Refresh with buttons
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error opening edit form for user '{username}': {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (columnName == "Fire")
+            {
+                DialogResult result = MessageBox.Show(
+                    $"Are you sure you want to Fire the user '{username}'?",
+                    "Confirm Fire",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        using (SqlConnection connection = new SqlConnection(ConnectionString))
+                        {
+                            string query = @"UPDATE users SET is_active = 0 WHERE user_id = @user_id";
+                            using (SqlCommand command = new SqlCommand(query, connection))
+                            {
+                                command.Parameters.AddWithValue("@user_id", userId);
+                                connection.Open();
+                                int rowsAffected = command.ExecuteNonQuery();
+                                if (rowsAffected > 0)
+                                {
+                                    MessageBox.Show($"User '{username}' Fire successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    LoadStaffData(includeEditDisableButtons: true); // Refresh with buttons
+                                }
+                                else
+                                {
+                                    MessageBox.Show($"No user found with ID '{userId}'.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error disabling user '{username}': {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void Backtostaff_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Visible = false;
+            Newstaff_btn.Visible = true;
+            Stafflist_btn.Visible = true;
+            EFstaff_btn.Visible = true;
+            Backtostaff.Visible = false;
+
+            dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
+        }
+
+        private void OwnerForm_Load(object sender, EventArgs e)
+        {
+        }
     }
 }

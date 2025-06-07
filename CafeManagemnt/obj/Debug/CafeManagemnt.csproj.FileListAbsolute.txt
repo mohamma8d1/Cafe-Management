@@ -142,3 +142,4 @@ D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.csproj.CoreCompileInputs.cache
 D:\cafese\CafeManagemnt\obj\Debug\CafeMana.B349A8C8.Up2Date
 D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.exe
 D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.pdb
+D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.EditStaffForm.resources

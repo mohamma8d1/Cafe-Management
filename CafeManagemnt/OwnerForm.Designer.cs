@@ -35,15 +35,16 @@ namespace CafeManagemnt
             this.username = new System.Windows.Forms.Label();
             this.CafeTitle = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Backtostaff = new CafeManagemnt.Controls.MainButton();
+            this.EFstaff_btn = new CafeManagemnt.Controls.MainButton();
+            this.Stafflist_btn = new CafeManagemnt.Controls.MainButton();
+            this.Newstaff_btn = new CafeManagemnt.Controls.MainButton();
             this.UserShowbtn = new CafeManagemnt.Controls.MainButton();
             this.Report_btn = new CafeManagemnt.Controls.MainButton();
             this.InventoryManagement_btn = new CafeManagemnt.Controls.MainButton();
             this.StaffManagement_btn = new CafeManagemnt.Controls.MainButton();
             this.MenuManagement_btn = new CafeManagemnt.Controls.MainButton();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.EFstaff_btn = new CafeManagemnt.Controls.MainButton();
-            this.Stafflist_btn = new CafeManagemnt.Controls.MainButton();
-            this.Newstaff_btn = new CafeManagemnt.Controls.MainButton();
             this.Header.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -99,6 +100,111 @@ namespace CafeManagemnt
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(349, 743);
             this.panel1.TabIndex = 9;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
+            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.GridColor = System.Drawing.Color.Black;
+            this.dataGridView1.Location = new System.Drawing.Point(348, 89);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.RowHeadersWidth = 51;
+            this.dataGridView1.Size = new System.Drawing.Size(1099, 622);
+            this.dataGridView1.TabIndex = 8;
+            this.dataGridView1.Visible = false;
+            // 
+            // Backtostaff
+            // 
+            this.Backtostaff.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.Backtostaff.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.Backtostaff.BorderColor = System.Drawing.Color.White;
+            this.Backtostaff.BorderRadius = 20;
+            this.Backtostaff.BorderSize = 0;
+            this.Backtostaff.FlatAppearance.BorderSize = 0;
+            this.Backtostaff.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Backtostaff.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Backtostaff.ForeColor = System.Drawing.Color.White;
+            this.Backtostaff.Location = new System.Drawing.Point(793, 737);
+            this.Backtostaff.Margin = new System.Windows.Forms.Padding(4);
+            this.Backtostaff.Name = "Backtostaff";
+            this.Backtostaff.Size = new System.Drawing.Size(208, 83);
+            this.Backtostaff.TabIndex = 17;
+            this.Backtostaff.Text = "Back";
+            this.Backtostaff.TextColor = System.Drawing.Color.White;
+            this.Backtostaff.UseVisualStyleBackColor = false;
+            this.Backtostaff.Visible = false;
+            this.Backtostaff.Click += new System.EventHandler(this.Backtostaff_Click);
+            // 
+            // EFstaff_btn
+            // 
+            this.EFstaff_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.EFstaff_btn.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.EFstaff_btn.BorderColor = System.Drawing.Color.White;
+            this.EFstaff_btn.BorderRadius = 20;
+            this.EFstaff_btn.BorderSize = 0;
+            this.EFstaff_btn.FlatAppearance.BorderSize = 0;
+            this.EFstaff_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.EFstaff_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EFstaff_btn.ForeColor = System.Drawing.Color.White;
+            this.EFstaff_btn.Location = new System.Drawing.Point(727, 540);
+            this.EFstaff_btn.Margin = new System.Windows.Forms.Padding(4);
+            this.EFstaff_btn.Name = "EFstaff_btn";
+            this.EFstaff_btn.Size = new System.Drawing.Size(339, 100);
+            this.EFstaff_btn.TabIndex = 15;
+            this.EFstaff_btn.Text = "Edit / Fair Staff";
+            this.EFstaff_btn.TextColor = System.Drawing.Color.White;
+            this.EFstaff_btn.UseVisualStyleBackColor = false;
+            this.EFstaff_btn.Visible = false;
+            this.EFstaff_btn.Click += new System.EventHandler(this.Editstaff_btn_Click);
+            // 
+            // Stafflist_btn
+            // 
+            this.Stafflist_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.Stafflist_btn.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.Stafflist_btn.BorderColor = System.Drawing.Color.White;
+            this.Stafflist_btn.BorderRadius = 20;
+            this.Stafflist_btn.BorderSize = 0;
+            this.Stafflist_btn.FlatAppearance.BorderSize = 0;
+            this.Stafflist_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Stafflist_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Stafflist_btn.ForeColor = System.Drawing.Color.White;
+            this.Stafflist_btn.Location = new System.Drawing.Point(727, 380);
+            this.Stafflist_btn.Margin = new System.Windows.Forms.Padding(4);
+            this.Stafflist_btn.Name = "Stafflist_btn";
+            this.Stafflist_btn.Size = new System.Drawing.Size(339, 100);
+            this.Stafflist_btn.TabIndex = 14;
+            this.Stafflist_btn.Text = "Staff List";
+            this.Stafflist_btn.TextColor = System.Drawing.Color.White;
+            this.Stafflist_btn.UseVisualStyleBackColor = false;
+            this.Stafflist_btn.Visible = false;
+            this.Stafflist_btn.Click += new System.EventHandler(this.Stafflist_btn_Click);
+            // 
+            // Newstaff_btn
+            // 
+            this.Newstaff_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.Newstaff_btn.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
+            this.Newstaff_btn.BorderColor = System.Drawing.Color.White;
+            this.Newstaff_btn.BorderRadius = 20;
+            this.Newstaff_btn.BorderSize = 0;
+            this.Newstaff_btn.FlatAppearance.BorderSize = 0;
+            this.Newstaff_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Newstaff_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Newstaff_btn.ForeColor = System.Drawing.Color.White;
+            this.Newstaff_btn.Location = new System.Drawing.Point(727, 220);
+            this.Newstaff_btn.Margin = new System.Windows.Forms.Padding(4);
+            this.Newstaff_btn.Name = "Newstaff_btn";
+            this.Newstaff_btn.Size = new System.Drawing.Size(339, 100);
+            this.Newstaff_btn.TabIndex = 13;
+            this.Newstaff_btn.Text = "New Staff";
+            this.Newstaff_btn.TextColor = System.Drawing.Color.White;
+            this.Newstaff_btn.UseVisualStyleBackColor = false;
+            this.Newstaff_btn.Visible = false;
+            this.Newstaff_btn.Click += new System.EventHandler(this.Newstaff_btn_Click);
             // 
             // UserShowbtn
             // 
@@ -205,95 +311,13 @@ namespace CafeManagemnt
             this.MenuManagement_btn.UseVisualStyleBackColor = false;
             this.MenuManagement_btn.Click += new System.EventHandler(this.MenuManagement_btn_Click);
             // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
-            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.GridColor = System.Drawing.Color.Black;
-            this.dataGridView1.Location = new System.Drawing.Point(348, 89);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowHeadersWidth = 51;
-            this.dataGridView1.Size = new System.Drawing.Size(1099, 641);
-            this.dataGridView1.TabIndex = 8;
-            this.dataGridView1.Visible = false;
-            // 
-            // EFstaff_btn
-            // 
-            this.EFstaff_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
-            this.EFstaff_btn.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
-            this.EFstaff_btn.BorderColor = System.Drawing.Color.White;
-            this.EFstaff_btn.BorderRadius = 20;
-            this.EFstaff_btn.BorderSize = 0;
-            this.EFstaff_btn.FlatAppearance.BorderSize = 0;
-            this.EFstaff_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.EFstaff_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.EFstaff_btn.ForeColor = System.Drawing.Color.White;
-            this.EFstaff_btn.Location = new System.Drawing.Point(727, 540);
-            this.EFstaff_btn.Margin = new System.Windows.Forms.Padding(4);
-            this.EFstaff_btn.Name = "EFstaff_btn";
-            this.EFstaff_btn.Size = new System.Drawing.Size(339, 100);
-            this.EFstaff_btn.TabIndex = 15;
-            this.EFstaff_btn.Text = "Edit / Fair Staff";
-            this.EFstaff_btn.TextColor = System.Drawing.Color.White;
-            this.EFstaff_btn.UseVisualStyleBackColor = false;
-            this.EFstaff_btn.Visible = false;
-            this.EFstaff_btn.Click += new System.EventHandler(this.Editstaff_btn_Click);
-            // 
-            // Stafflist_btn
-            // 
-            this.Stafflist_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
-            this.Stafflist_btn.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
-            this.Stafflist_btn.BorderColor = System.Drawing.Color.White;
-            this.Stafflist_btn.BorderRadius = 20;
-            this.Stafflist_btn.BorderSize = 0;
-            this.Stafflist_btn.FlatAppearance.BorderSize = 0;
-            this.Stafflist_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Stafflist_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Stafflist_btn.ForeColor = System.Drawing.Color.White;
-            this.Stafflist_btn.Location = new System.Drawing.Point(727, 380);
-            this.Stafflist_btn.Margin = new System.Windows.Forms.Padding(4);
-            this.Stafflist_btn.Name = "Stafflist_btn";
-            this.Stafflist_btn.Size = new System.Drawing.Size(339, 100);
-            this.Stafflist_btn.TabIndex = 14;
-            this.Stafflist_btn.Text = "Staff List";
-            this.Stafflist_btn.TextColor = System.Drawing.Color.White;
-            this.Stafflist_btn.UseVisualStyleBackColor = false;
-            this.Stafflist_btn.Visible = false;
-            this.Stafflist_btn.Click += new System.EventHandler(this.Stafflist_btn_Click);
-            // 
-            // Newstaff_btn
-            // 
-            this.Newstaff_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
-            this.Newstaff_btn.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(40)))), ((int)(((byte)(24)))));
-            this.Newstaff_btn.BorderColor = System.Drawing.Color.White;
-            this.Newstaff_btn.BorderRadius = 20;
-            this.Newstaff_btn.BorderSize = 0;
-            this.Newstaff_btn.FlatAppearance.BorderSize = 0;
-            this.Newstaff_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Newstaff_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Newstaff_btn.ForeColor = System.Drawing.Color.White;
-            this.Newstaff_btn.Location = new System.Drawing.Point(727, 220);
-            this.Newstaff_btn.Margin = new System.Windows.Forms.Padding(4);
-            this.Newstaff_btn.Name = "Newstaff_btn";
-            this.Newstaff_btn.Size = new System.Drawing.Size(339, 100);
-            this.Newstaff_btn.TabIndex = 13;
-            this.Newstaff_btn.Text = "New Staff";
-            this.Newstaff_btn.TextColor = System.Drawing.Color.White;
-            this.Newstaff_btn.UseVisualStyleBackColor = false;
-            this.Newstaff_btn.Visible = false;
-            this.Newstaff_btn.Click += new System.EventHandler(this.Newstaff_btn_Click);
-            // 
             // OwnerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(137)))), ((int)(((byte)(104)))));
             this.ClientSize = new System.Drawing.Size(1447, 832);
+            this.Controls.Add(this.Backtostaff);
             this.Controls.Add(this.EFstaff_btn);
             this.Controls.Add(this.Stafflist_btn);
             this.Controls.Add(this.Newstaff_btn);
@@ -305,6 +329,7 @@ namespace CafeManagemnt
             this.Name = "OwnerForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Cofe Management";
+            this.Load += new System.EventHandler(this.OwnerForm_Load);
             this.Header.ResumeLayout(false);
             this.Header.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -335,5 +360,6 @@ namespace CafeManagemnt
         private Controls.MainButton Newstaff_btn;
         private Controls.MainButton Stafflist_btn;
         private Controls.MainButton EFstaff_btn;
+        private Controls.MainButton Backtostaff;
     }
 }
