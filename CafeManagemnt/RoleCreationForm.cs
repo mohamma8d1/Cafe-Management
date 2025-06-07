@@ -7,7 +7,7 @@ namespace UserManagementSystem
 {
     public partial class RoleCreationForm : Form
     {
-        private string connectionString = @"Data Source=MOHAMMAD-LOQ;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
+        private string connectionString = @"Data Source=.;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
 
         public RoleCreationForm()
         {

@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
+using UserManagementSystem;
 
 
 namespace CafeManagemnt
@@ -214,7 +215,12 @@ namespace CafeManagemnt
         private void UserShowbtn_Click(object sender, EventArgs e)
         {
             // Load and display user data
+
             LoadData();
+            Newstaff_btn.Visible = false;
+            Stafflist_btn.Visible = false;
+            EFstaff_btn.Visible = false;
+
             dataGridView1.Visible = true;
         }
 
@@ -222,11 +228,20 @@ namespace CafeManagemnt
         {
             // Load and display inventory data
             LoadInventoryData();
+            Newstaff_btn.Visible = false;
+            Stafflist_btn.Visible = false;
+            EFstaff_btn.Visible = false;
+
             dataGridView1.Visible = true;
         }
 
         private void StaffManagement_btn_Click(object sender, EventArgs e)
         {
+            dataGridView1.Visible = false;
+            Newstaff_btn.Visible = true;
+            Stafflist_btn.Visible = true;
+            EFstaff_btn.Visible = true;
+
 
         }
 
@@ -239,6 +254,24 @@ namespace CafeManagemnt
         {
 
         }
+
+        private void Newstaff_btn_Click(object sender, EventArgs e)
+        {
+            Newstaff_form newStaffForm = new Newstaff_form();
+            newStaffForm.ShowDialog();
+        }
+
+
+        private void Stafflist_btn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Editstaff_btn_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
     }
 }

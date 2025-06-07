@@ -15,7 +15,7 @@ namespace UserManagementSystem
 {
     public partial class UserRegistrationForm : Form
     {
-        private const string ConnectionString = @"Data Source=MOHAMMAD-LOQ;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
+        private const string ConnectionString = @"Data Source=.;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
         private List<Role> availableRoles = new List<Role>();
 
         public UserRegistrationForm()
