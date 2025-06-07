@@ -369,20 +369,20 @@ namespace CafeManagemnt
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = @"
-            SELECT 
-                CONVERT(date, o.order_date) AS Date,
-                COUNT(DISTINCT o.order_id) AS TotalOrders,
-                SUM(oi.quantity * oi.unit_price) AS TotalSales,
-                AVG(oi.quantity * oi.unit_price) AS AverageOrderValue
-            FROM 
-                orders o
-                INNER JOIN order_items oi ON o.order_id = oi.order_id
-            WHERE 
-                o.order_date BETWEEN @fromDate AND @toDate
-            GROUP BY 
-                CONVERT(date, o.order_date)
-            ORDER BY 
-                Date";
+     SELECT 
+         CONVERT(date, o.order_date) AS Date,
+         COUNT(DISTINCT o.order_id) AS TotalOrders,
+         SUM(oi.quantity * oi.unit_price) AS TotalSales,
+         AVG(oi.quantity * oi.unit_price) AS AverageOrderValue
+     FROM 
+         orders o
+         INNER JOIN order_items oi ON o.order_id = oi.order_id
+     WHERE 
+         o.order_date BETWEEN @fromDate AND @toDate
+     GROUP BY 
+         CONVERT(date, o.order_date)
+     ORDER BY 
+         Date";
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                 adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
@@ -393,16 +393,17 @@ namespace CafeManagemnt
 
                 if (dataTable.Rows.Count > 0)
                 {
-                    // Format currency columns
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        if (row["TotalSales"] != DBNull.Value)
-                            row["TotalSales"] = string.Format("{0:C}", row["TotalSales"]);
-                        if (row["AverageOrderValue"] != DBNull.Value)
-                            row["AverageOrderValue"] = string.Format("{0:C}", row["AverageOrderValue"]);
-                    }
-
                     reportDataGridView.DataSource = dataTable;
+
+                    // Apply currency formatting in DataGridView
+                    if (reportDataGridView.Columns["TotalSales"] != null)
+                    {
+                        reportDataGridView.Columns["TotalSales"].DefaultCellStyle.Format = "C";
+                    }
+                    if (reportDataGridView.Columns["AverageOrderValue"] != null)
+                    {
+                        reportDataGridView.Columns["AverageOrderValue"].DefaultCellStyle.Format = "C";
+                    }
                 }
                 else
                 {
@@ -623,26 +624,25 @@ namespace CafeManagemnt
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                // Updated query to work with products table instead of items
                 string query = @"
-            SELECT 
-                p.product_name AS Item,
-                SUM(oi.quantity) AS TotalQuantitySold,
-                SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
-                COUNT(DISTINCT o.order_id) AS OrderCount,
-                CAST(COUNT(DISTINCT o.order_id) * 100.0 / 
-                    (SELECT COUNT(DISTINCT order_id) FROM orders WHERE order_date BETWEEN @fromDate AND @toDate) 
-                    AS DECIMAL(5,2)) AS OrderPercentage
-            FROM 
-                order_items oi
-                INNER JOIN orders o ON oi.order_id = o.order_id
-                INNER JOIN products p ON oi.product_id = p.product_id
-            WHERE 
-                o.order_date BETWEEN @fromDate AND @toDate
-            GROUP BY 
-                p.product_name
-            ORDER BY 
-                TotalQuantitySold DESC";
+     SELECT 
+         p.product_name AS Item,
+         SUM(oi.quantity) AS TotalQuantitySold,
+         SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
+         COUNT(DISTINCT o.order_id) AS OrderCount,
+         CAST(COUNT(DISTINCT o.order_id) * 100.0 / 
+             (SELECT COUNT(DISTINCT order_id) FROM orders WHERE order_date BETWEEN @fromDate AND @toDate) 
+             AS DECIMAL(5,2)) AS OrderPercentage
+     FROM 
+         order_items oi
+         INNER JOIN orders o ON oi.order_id = o.order_id
+         INNER JOIN products p ON oi.product_id = p.product_id
+     WHERE 
+         o.order_date BETWEEN @fromDate AND @toDate
+     GROUP BY 
+         p.product_name
+     ORDER BY 
+         TotalQuantitySold DESC";
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                 adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
@@ -656,25 +656,23 @@ namespace CafeManagemnt
                 }
                 catch (SqlException ex)
                 {
-                    // If products table doesn't exist or has different structure, try alternative
                     if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("Invalid column name"))
                     {
-                        // Simplified query without products join
                         query = @"
-                    SELECT 
-                        'Product ' + CAST(oi.product_id AS VARCHAR(10)) AS Item,
-                        SUM(oi.quantity) AS TotalQuantitySold,
-                        SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
-                        COUNT(DISTINCT o.order_id) AS OrderCount
-                    FROM 
-                        order_items oi
-                        INNER JOIN orders o ON oi.order_id = o.order_id
-                    WHERE 
-                        o.order_date BETWEEN @fromDate AND @toDate
-                    GROUP BY 
-                        oi.product_id
-                    ORDER BY 
-                        TotalQuantitySold DESC";
+             SELECT 
+                 'Product ' + CAST(oi.product_id AS VARCHAR(10)) AS Item,
+                 SUM(oi.quantity) AS TotalQuantitySold,
+                 SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
+                 COUNT(DISTINCT o.order_id) AS OrderCount
+             FROM 
+                 order_items oi
+                 INNER JOIN orders o ON oi.order_id = o.order_id
+             WHERE 
+                 o.order_date BETWEEN @fromDate AND @toDate
+             GROUP BY 
+                 oi.product_id
+             ORDER BY 
+                 TotalQuantitySold DESC";
 
                         adapter = new SqlDataAdapter(query, connection);
                         adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
@@ -689,26 +687,19 @@ namespace CafeManagemnt
 
                 if (dataTable.Rows.Count > 0)
                 {
-                    // Format currency and percentage columns
-                    foreach (DataRow row in dataTable.Rows)
+                    reportDataGridView.DataSource = dataTable;
+
+                    // Apply percentage formatting to OrderPercentage in DataGridView
+                    if (reportDataGridView.Columns["OrderPercentage"] != null)
                     {
-                        if (row["TotalRevenue"] != DBNull.Value)
-                        {
-                            if (decimal.TryParse(row["TotalRevenue"].ToString(), out decimal revenue))
-                            {
-                                row["TotalRevenue"] = string.Format("{0:C}", revenue);
-                            }
-                        }
-                        if (dataTable.Columns.Contains("OrderPercentage") && row["OrderPercentage"] != DBNull.Value)
-                        {
-                            if (decimal.TryParse(row["OrderPercentage"].ToString(), out decimal percentage))
-                            {
-                                row["OrderPercentage"] = string.Format("{0:0.00}%", percentage);
-                            }
-                        }
+                        reportDataGridView.Columns["OrderPercentage"].DefaultCellStyle.Format = "0.00\\%";
                     }
 
-                    reportDataGridView.DataSource = dataTable;
+                    // Apply currency formatting to TotalRevenue in DataGridView (if needed)
+                    if (reportDataGridView.Columns["TotalRevenue"] != null)
+                    {
+                        reportDataGridView.Columns["TotalRevenue"].DefaultCellStyle.Format = "C";
+                    }
                 }
                 else
                 {
@@ -1108,5 +1099,14 @@ namespace CafeManagemnt
             }
         }
 
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void Header_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

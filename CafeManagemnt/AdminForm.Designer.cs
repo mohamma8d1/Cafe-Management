@@ -56,6 +56,7 @@ namespace CafeManagemnt
             this.Header.Name = "Header";
             this.Header.Size = new System.Drawing.Size(1085, 80);
             this.Header.TabIndex = 1;
+            this.Header.Paint += new System.Windows.Forms.PaintEventHandler(this.Header_Paint);
             // 
             // username
             // 
@@ -80,6 +81,7 @@ namespace CafeManagemnt
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(262, 596);
             this.panel1.TabIndex = 2;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // Reportbtn
             // 
