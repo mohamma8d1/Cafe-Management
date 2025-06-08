@@ -167,7 +167,7 @@ namespace CafeManagemnt
             }
         }
 
-        private void LoadStaffData(bool includeEditDisableButtons = false)
+        private void LoadStaffData(bool includeEditDisableButtons = false, bool showOnlyActive = true)
         {
             try
             {
@@ -176,7 +176,8 @@ namespace CafeManagemnt
                     string query = @"SELECT u.user_id AS 'User ID', u.username AS 'Username', 
                                    e.salary AS 'Salary', 
                                    ul.login_time AS 'Last Login', 
-                                   ul.logout_time AS 'Last Logout'
+                                   ul.logout_time AS 'Last Logout',
+                                   CASE WHEN u.is_active = 1 THEN 'Active' ELSE 'Inactive' END AS 'Status'
                                    FROM users u
                                    INNER JOIN employees e ON u.user_id = e.user_id
                                    LEFT JOIN (
@@ -186,7 +187,7 @@ namespace CafeManagemnt
                                        FROM user_logs
                                        GROUP BY user_id
                                    ) ul ON u.user_id = ul.user_id
-                                   WHERE u.is_active = 1 AND u.role_id != 2";
+                                   WHERE u.role_id != 2" + (showOnlyActive ? " AND u.is_active = 1" : "");
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                     _dataTable = new DataTable();
@@ -245,6 +246,8 @@ namespace CafeManagemnt
                         dataGridView1.Columns["User ID"].Width = 80;
                     if (dataGridView1.Columns["Username"] != null)
                         dataGridView1.Columns["Username"].Width = 120;
+                    if (dataGridView1.Columns["Status"] != null)
+                        dataGridView1.Columns["Status"].Width = 80;
                 }
             }
             catch (Exception ex)
@@ -962,7 +965,6 @@ namespace CafeManagemnt
             }
         }
 
-
         private void MenuDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
@@ -1060,10 +1062,10 @@ namespace CafeManagemnt
 
         private void Stafflist_btn_Click(object sender, EventArgs e)
         {
-            LoadStaffData();
-            Newstaff_btn.Visible = true;
-            Stafflist_btn.Visible = true;
-            EFstaff_btn.Visible = true;
+            LoadStaffData(includeEditDisableButtons: false, showOnlyActive: true);
+            Newstaff_btn.Visible = false;
+            Stafflist_btn.Visible = false;
+            EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = true;
             Additem_btn.Visible = false;
@@ -1075,7 +1077,7 @@ namespace CafeManagemnt
 
         private void Editstaff_btn_Click(object sender, EventArgs e)
         {
-            LoadStaffData(includeEditDisableButtons: true);
+            LoadStaffData(includeEditDisableButtons: true, showOnlyActive: false);
             Newstaff_btn.Visible = false;
             Stafflist_btn.Visible = false;
             EFstaff_btn.Visible = false;
@@ -1120,7 +1122,7 @@ namespace CafeManagemnt
                 {
                     EditStaffForm editForm = new EditStaffForm(userId);
                     editForm.ShowDialog();
-                    LoadStaffData(includeEditDisableButtons: true);
+                    LoadStaffData(includeEditDisableButtons: true, showOnlyActive: false);
                 }
                 catch (Exception ex)
                 {
@@ -1151,8 +1153,8 @@ namespace CafeManagemnt
                                 int rowsAffected = command.ExecuteNonQuery();
                                 if (rowsAffected > 0)
                                 {
-                                    MessageBox.Show($"User '{username}' Fire successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    LoadStaffData(includeEditDisableButtons: true);
+                                    MessageBox.Show($"User '{username}' Fired successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    LoadStaffData(includeEditDisableButtons: true, showOnlyActive: false);
                                 }
                                 else
                                 {
