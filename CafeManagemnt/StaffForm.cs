@@ -459,7 +459,7 @@ namespace CafeManagemnt
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Horizontal,
-                SplitterDistance = 250,
+                SplitterDistance = 45,
                 BorderStyle = BorderStyle.FixedSingle
             };
 
