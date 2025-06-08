@@ -20,7 +20,6 @@ namespace CafeManagemnt
             this.FormClosing += StaffForm_FormClosing;
         }
 
-
         private void StaffForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             DialogResult result = MessageBox.Show(
@@ -89,7 +88,7 @@ namespace CafeManagemnt
                                 ISNULL(i.quantity_in_stock, 0) AS inventory_count
                              FROM dbo.products p
                              LEFT JOIN dbo.inventory i ON p.product_id = i.product_id
-                             WHERE ISNULL(i.is_active, 1) = 1
+                             WHERE p.is_active = 1 AND ISNULL(i.is_active, 1) = 1
                              ORDER BY p.product_name";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -227,7 +226,9 @@ namespace CafeManagemnt
                     Location = new Point(5, 75),
                     Size = new Size(itemWidth - 10, 20),
                     Font = new Font("Calibri", 10, FontStyle.Bold),
-                    ForeColor = Color.FromArgb(67, 40, 24),
+                    ForeColor = Color.FromArgb
+
+(67, 40, 24),
                     TextAlign = ContentAlignment.MiddleCenter,
                     BackColor = Color.FromArgb(245, 245, 220)
                 };

@@ -143,9 +143,7 @@ D:\cafese\CafeManagemnt\obj\Debug\CafeMana.B349A8C8.Up2Date
 D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.exe
 D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.pdb
 D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.EditStaffForm.resources
-<<<<<<< HEAD
 D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.EditProductForm.resources
 D:\cafese\CafeManagemnt\obj\Debug\CafeManagemnt.MenuItemForm.resources
-=======
 E:\MainProject\CafeManagemnt\CafeManagemnt\obj\Debug\CafeManagemnt.EditStaffForm.resources
 >>>>>>> ff03f7c4d8caa4a0b9b168004a0ea45b3c284ef7

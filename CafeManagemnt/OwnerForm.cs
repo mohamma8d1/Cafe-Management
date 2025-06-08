@@ -290,6 +290,7 @@ namespace CafeManagemnt
             Stafflist_btn.Visible = false;
             EFstaff_btn.Visible = false;
             Backtostaff.Visible = false;
+            Additem_btn.Visible = false;
 
             // Create or show report panel
             if (!Controls.Contains(reportPanel))
@@ -831,6 +832,7 @@ namespace CafeManagemnt
             EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = false;
+            Additem_btn.Visible = false;
             if (reportPanel != null) reportPanel.Visible = false;
             if (menuPanel != null) menuPanel.Visible = false;
 
@@ -845,6 +847,7 @@ namespace CafeManagemnt
             EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = false;
+            Additem_btn.Visible = false;
             if (reportPanel != null) reportPanel.Visible = false;
             if (menuPanel != null) menuPanel.Visible = false;
 
@@ -858,6 +861,7 @@ namespace CafeManagemnt
             Stafflist_btn.Visible = true;
             EFstaff_btn.Visible = true;
             Backtostaff.Visible = false;
+            Additem_btn.Visible = false;
             if (reportPanel != null) reportPanel.Visible = false;
             if (menuPanel != null) menuPanel.Visible = false;
 
@@ -868,19 +872,13 @@ namespace CafeManagemnt
 
         private void MenuManagement_btn_Click(object sender, EventArgs e)
         {
-            // Remove existing button if it exists
-            if (Controls.Contains(addNewItemButton))
-            {
-                Controls.Remove(addNewItemButton);
-                addNewItemButton.Dispose();
-            }
-
             LoadMenuData();
             Newstaff_btn.Visible = false;
             Stafflist_btn.Visible = false;
             EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = false;
+            Additem_btn.Visible = true;
             if (reportPanel != null) reportPanel.Visible = false;
             if (menuPanel != null) menuPanel.Visible = false;
 
@@ -956,9 +954,6 @@ namespace CafeManagemnt
                         dataGridView1.Columns["Status"].Width = 80;
 
                     SetupDataGridView();
-
-                    // Add "Add New Item" button below the DataGridView
-                    AddNewItemButton();
                 }
             }
             catch (Exception ex)
@@ -967,47 +962,6 @@ namespace CafeManagemnt
             }
         }
 
-        private void AddNewItemButton()
-        {
-            // Remove existing button if it exists
-            if (Controls.Contains(addNewItemButton))
-            {
-                Controls.Remove(addNewItemButton);
-                addNewItemButton.Dispose();
-            }
-
-            // Create new button
-            addNewItemButton = new Button
-            {
-                Text = "➕ Add New Menu Item",
-                Size = new Size(200, 45),
-                BackColor = Color.FromArgb(67, 40, 24),
-                ForeColor = Color.White,
-                Font = new Font("Calibri", 12, FontStyle.Bold),
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand,
-                Location = new Point(dataGridView1.Left, dataGridView1.Bottom + 20)
-            };
-            addNewItemButton.FlatAppearance.BorderSize = 2;
-            addNewItemButton.FlatAppearance.BorderColor = Color.White;
-            addNewItemButton.Click += (s, e) =>
-            {
-                MenuItemForm newItemForm = new MenuItemForm(0); // 0 for new item
-                if (newItemForm.ShowDialog() == DialogResult.OK)
-                {
-                    LoadMenuData(); // Refresh data after adding new item
-                }
-            };
-
-            // Add button to form
-            Controls.Add(addNewItemButton);
-
-            // Adjust form height to accommodate the button
-            this.Height = addNewItemButton.Bottom + 70;
-        }
-
-        // Add this field to your class variables
-        private Button addNewItemButton;
 
         private void MenuDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -1064,6 +1018,7 @@ namespace CafeManagemnt
             Stafflist_btn.Visible = false;
             EFstaff_btn.Visible = false;
             Backtostaff.Visible = false;
+            Additem_btn.Visible = true;
             if (reportPanel != null) reportPanel.Visible = false;
 
             if (!Controls.Contains(menuPanel))
@@ -1085,30 +1040,7 @@ namespace CafeManagemnt
                 Visible = false
             };
 
-            Button addNewItemButton = new Button
-            {
-                Text = "➕ Add New Menu Item",
-                Size = new Size(200, 45),
-                BackColor = Color.FromArgb(67, 40, 24),
-                ForeColor = Color.White,
-                Font = new Font("Calibri", 12, FontStyle.Bold),
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand,
-                Location = new Point(20, 20)
-            };
-            addNewItemButton.FlatAppearance.BorderSize = 2;
-            addNewItemButton.FlatAppearance.BorderColor = Color.White;
-
-            addNewItemButton.Click += (s, ev) =>
-            {
-                MenuItemForm newItemForm = new MenuItemForm(0); // 0 for new item
-                if (newItemForm.ShowDialog() == DialogResult.OK)
-                {
-                    // No need to reload menu items since display is removed
-                }
-            };
-
-            menuPanel.Controls.Add(addNewItemButton);
+            // Use existing Additem_btn instead of creating a new button
             Controls.Add(menuPanel);
         }
 
@@ -1129,11 +1061,12 @@ namespace CafeManagemnt
         private void Stafflist_btn_Click(object sender, EventArgs e)
         {
             LoadStaffData();
-            Newstaff_btn.Visible = false;
-            Stafflist_btn.Visible = false;
-            EFstaff_btn.Visible = false;
+            Newstaff_btn.Visible = true;
+            Stafflist_btn.Visible = true;
+            EFstaff_btn.Visible = true;
             dataGridView1.Visible = true;
             Backtostaff.Visible = true;
+            Additem_btn.Visible = false;
             if (reportPanel != null) reportPanel.Visible = false;
             if (menuPanel != null) menuPanel.Visible = false;
 
@@ -1148,6 +1081,7 @@ namespace CafeManagemnt
             EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = true;
+            Additem_btn.Visible = false;
             if (reportPanel != null) reportPanel.Visible = false;
             if (menuPanel != null) menuPanel.Visible = false;
 
@@ -1242,6 +1176,7 @@ namespace CafeManagemnt
             Stafflist_btn.Visible = true;
             EFstaff_btn.Visible = true;
             Backtostaff.Visible = false;
+            Additem_btn.Visible = false;
             if (reportPanel != null) reportPanel.Visible = false;
             if (menuPanel != null) menuPanel.Visible = false;
 
@@ -1250,6 +1185,15 @@ namespace CafeManagemnt
 
         private void OwnerForm_Load(object sender, EventArgs e)
         {
+        }
+
+        private void Additem_btn_Click(object sender, EventArgs e)
+        {
+            MenuItemForm newItemForm = new MenuItemForm(0); // 0 for new item
+            if (newItemForm.ShowDialog() == DialogResult.OK)
+            {
+                LoadMenuData(); // Refresh data after adding new item
+            }
         }
     }
 }
