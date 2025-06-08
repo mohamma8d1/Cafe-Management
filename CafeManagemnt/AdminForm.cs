@@ -14,10 +14,6 @@ namespace CafeManagemnt
         private const string _connectionString = @"Data Source=.;Initial Catalog=CafemanagementDB;Integrated Security=True;Encrypt=False";
         private DataTable _dataTable;
 
-
-
-
-
         public AdminForm(int userId)
         {
             InitializeComponent();
@@ -362,8 +358,6 @@ namespace CafeManagemnt
                 Cursor = Cursors.Default;
             }
         }
-        // Replace your existing report generation methods with these corrected versions
-
         private void GenerateSalesReport(DateTime fromDate, DateTime toDate)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -413,12 +407,10 @@ namespace CafeManagemnt
             }
         }
 
-
         private void GenerateInventoryReport(DateTime fromDate, DateTime toDate)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                // Simple and clean query - this should show product names
                 string query = @"
             SELECT 
                 COALESCE(p.product_name, 'Product ID: ' + CAST(i.product_id AS VARCHAR(10))) AS ProductName,
@@ -483,7 +475,6 @@ namespace CafeManagemnt
             }
         }
 
-        // Add this method for status color formatting
         private void ReportDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (reportDataGridView.Columns[e.ColumnIndex].Name == "Status" && e.RowIndex >= 0)
@@ -540,7 +531,6 @@ namespace CafeManagemnt
                 }
                 catch (SqlException ex)
                 {
-                    // If the user_logs table doesn't exist or has different structure, try simpler query
                     if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("Invalid column name"))
                     {
                         query = @"
@@ -568,7 +558,6 @@ namespace CafeManagemnt
 
                 if (dataTable.Rows.Count > 0)
                 {
-                    // Create a new DataTable with properly formatted data
                     DataTable formattedTable = new DataTable();
                     formattedTable.Columns.Add("Username", typeof(string));
                     formattedTable.Columns.Add("Role", typeof(string));
@@ -584,13 +573,11 @@ namespace CafeManagemnt
                         newRow["Role"] = row["Role"];
                         newRow["LoginCount"] = row["LoginCount"];
 
-                        // Format date columns
                         newRow["FirstLogin"] = row["FirstLogin"] == DBNull.Value ? "N/A" :
                             Convert.ToDateTime(row["FirstLogin"]).ToString("yyyy-MM-dd HH:mm");
                         newRow["LastLogin"] = row["LastLogin"] == DBNull.Value ? "N/A" :
                             Convert.ToDateTime(row["LastLogin"]).ToString("yyyy-MM-dd HH:mm");
 
-                        // Format session time with better error handling
                         string sessionTime = "N/A";
                         if (row["AvgSessionMinutes"] != DBNull.Value)
                         {
@@ -625,24 +612,24 @@ namespace CafeManagemnt
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = @"
-     SELECT 
-         p.product_name AS Item,
-         SUM(oi.quantity) AS TotalQuantitySold,
-         SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
-         COUNT(DISTINCT o.order_id) AS OrderCount,
-         CAST(COUNT(DISTINCT o.order_id) * 100.0 / 
-             (SELECT COUNT(DISTINCT order_id) FROM orders WHERE order_date BETWEEN @fromDate AND @toDate) 
-             AS DECIMAL(5,2)) AS OrderPercentage
-     FROM 
-         order_items oi
-         INNER JOIN orders o ON oi.order_id = o.order_id
-         INNER JOIN products p ON oi.product_id = p.product_id
-     WHERE 
-         o.order_date BETWEEN @fromDate AND @toDate
-     GROUP BY 
-         p.product_name
-     ORDER BY 
-         TotalQuantitySold DESC";
+                 SELECT 
+                     p.product_name AS Item,
+                     SUM(oi.quantity) AS TotalQuantitySold,
+                     SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
+                     COUNT(DISTINCT o.order_id) AS OrderCount,
+                     CAST(COUNT(DISTINCT o.order_id) * 100.0 / 
+                         (SELECT COUNT(DISTINCT order_id) FROM orders WHERE order_date BETWEEN @fromDate AND @toDate) 
+                         AS DECIMAL(5,2)) AS OrderPercentage
+                 FROM 
+                     order_items oi
+                     INNER JOIN orders o ON oi.order_id = o.order_id
+                     INNER JOIN products p ON oi.product_id = p.product_id
+                 WHERE 
+                     o.order_date BETWEEN @fromDate AND @toDate
+                 GROUP BY 
+                     p.product_name
+                 ORDER BY 
+                     TotalQuantitySold DESC";
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                 adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
@@ -659,20 +646,20 @@ namespace CafeManagemnt
                     if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("Invalid column name"))
                     {
                         query = @"
-             SELECT 
-                 'Product ' + CAST(oi.product_id AS VARCHAR(10)) AS Item,
-                 SUM(oi.quantity) AS TotalQuantitySold,
-                 SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
-                 COUNT(DISTINCT o.order_id) AS OrderCount
-             FROM 
-                 order_items oi
-                 INNER JOIN orders o ON oi.order_id = o.order_id
-             WHERE 
-                 o.order_date BETWEEN @fromDate AND @toDate
-             GROUP BY 
-                 oi.product_id
-             ORDER BY 
-                 TotalQuantitySold DESC";
+                         SELECT 
+                             'Product ' + CAST(oi.product_id AS VARCHAR(10)) AS Item,
+                             SUM(oi.quantity) AS TotalQuantitySold,
+                             SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
+                             COUNT(DISTINCT o.order_id) AS OrderCount
+                         FROM 
+                             order_items oi
+                             INNER JOIN orders o ON oi.order_id = o.order_id
+                         WHERE 
+                             o.order_date BETWEEN @fromDate AND @toDate
+                         GROUP BY 
+                             oi.product_id
+                         ORDER BY 
+                             TotalQuantitySold DESC";
 
                         adapter = new SqlDataAdapter(query, connection);
                         adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
@@ -689,13 +676,11 @@ namespace CafeManagemnt
                 {
                     reportDataGridView.DataSource = dataTable;
 
-                    // Apply percentage formatting to OrderPercentage in DataGridView
                     if (reportDataGridView.Columns["OrderPercentage"] != null)
                     {
                         reportDataGridView.Columns["OrderPercentage"].DefaultCellStyle.Format = "0.00\\%";
                     }
 
-                    // Apply currency formatting to TotalRevenue in DataGridView (if needed)
                     if (reportDataGridView.Columns["TotalRevenue"] != null)
                     {
                         reportDataGridView.Columns["TotalRevenue"].DefaultCellStyle.Format = "C";
@@ -847,11 +832,6 @@ namespace CafeManagemnt
             Form AddRole = new RoleCreationForm();
             AddRole.Show();
         }
-
-        
-
-       
-
         private void Backupbtn_Click(object sender, EventArgs e)
         {
             try
