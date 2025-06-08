@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using UserManagementSystem;
 
@@ -185,7 +186,7 @@ namespace CafeManagemnt
                                        FROM user_logs
                                        GROUP BY user_id
                                    ) ul ON u.user_id = ul.user_id
-                                   WHERE u.is_active = 1";
+                                   WHERE u.is_active = 1 AND u.role_id != 2";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                     _dataTable = new DataTable();
@@ -281,6 +282,547 @@ namespace CafeManagemnt
             dataGridView1.GridColor = Color.Black;
         }
 
+        private void ShowReportOptions()
+        {
+            // Hide other controls
+            dataGridView1.Visible = false;
+            Newstaff_btn.Visible = false;
+            Stafflist_btn.Visible = false;
+            EFstaff_btn.Visible = false;
+            Backtostaff.Visible = false;
+
+            // Create or show report panel
+            if (!Controls.Contains(reportPanel))
+            {
+                CreateReportPanel();
+            }
+
+            // Show report panel and reset selection
+            reportPanel.Visible = true;
+            reportTypeComboBox.SelectedIndex = 0;
+        }
+
+        private void CreateReportPanel()
+        {
+            // Create main report panel with same positioning as dataGridView1
+            reportPanel = new Panel
+            {
+                BackColor = Color.FromArgb(176, 137, 104),
+                Location = dataGridView1.Location,
+                Name = "reportPanel",
+                Size = dataGridView1.Size,
+                Visible = false
+            };
+
+            // Create report type label
+            Label reportTypeLabel = new Label
+            {
+                AutoSize = true,
+                Font = new Font("Calibri", 18F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(67, 40, 24),
+                Location = new Point(20, 20),
+                Text = "Select Report Type:"
+            };
+
+            // Create report type combo box
+            reportTypeComboBox = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Arial", 14F),
+                Location = new Point(250, 20),
+                Size = new Size(250, 30),
+                Name = "reportTypeComboBox"
+            };
+
+            // Add report types
+            reportTypeComboBox.Items.AddRange(new object[] {
+                "Sales Report",
+                "Inventory Report",
+                "User Activity Report",
+                "Popular Items Report"
+            });
+
+            // Create date range controls
+            Label fromDateLabel = new Label
+            {
+                AutoSize = true,
+                Font = new Font("Calibri", 14F),
+                ForeColor = Color.FromArgb(67, 40, 24),
+                Location = new Point(20, 70),
+                Text = "From Date:"
+            };
+
+            fromDatePicker = new DateTimePicker
+            {
+                Font = new Font("Arial", 12F),
+                Format = DateTimePickerFormat.Short,
+                Location = new Point(120, 70),
+                Size = new Size(150, 30),
+                Value = DateTime.Now.AddDays(-30)
+            };
+
+            Label toDateLabel = new Label
+            {
+                AutoSize = true,
+                Font = new Font("Calibri", 14F),
+                ForeColor = Color.FromArgb(67, 40, 24),
+                Location = new Point(300, 70),
+                Text = "To Date:"
+            };
+
+            toDatePicker = new DateTimePicker
+            {
+                Font = new Font("Arial", 12F),
+                Format = DateTimePickerFormat.Short,
+                Location = new Point(380, 70),
+                Size = new Size(150, 30),
+                Value = DateTime.Now
+            };
+
+            // Create generate report button
+            generateReportButton = new Controls.MainButton
+            {
+                BackColor = Color.FromArgb(67, 40, 24),
+                BackgroundColor = Color.FromArgb(67, 40, 24),
+                BorderColor = Color.White,
+                BorderRadius = 20,
+                BorderSize = 0,
+                FlatAppearance = { BorderSize = 0 },
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Microsoft Sans Serif", 14F, FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(550, 65),
+                Name = "generateReportButton",
+                Size = new Size(120, 40),
+                Text = "Generate",
+                TextColor = Color.White,
+                UseVisualStyleBackColor = false
+            };
+            generateReportButton.Click += GenerateReportButton_Click;
+
+            // Create report data grid view
+            reportDataGridView = new DataGridView
+            {
+                ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize,
+                Location = new Point(20, 120),
+                Name = "reportDataGridView",
+                Size = new Size(1059, 450),
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                BackgroundColor = Color.White,
+                RowTemplate = { Height = 30 },
+                DefaultCellStyle = { Font = new Font("Arial", 10F) },
+                ColumnHeadersDefaultCellStyle = { Font = new Font("Arial", 10F, FontStyle.Bold) },
+                ReadOnly = true,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false
+            };
+
+            // Add controls to report panel
+            reportPanel.Controls.Add(reportTypeLabel);
+            reportPanel.Controls.Add(reportTypeComboBox);
+            reportPanel.Controls.Add(fromDateLabel);
+            reportPanel.Controls.Add(fromDatePicker);
+            reportPanel.Controls.Add(toDateLabel);
+            reportPanel.Controls.Add(toDatePicker);
+            reportPanel.Controls.Add(generateReportButton);
+            reportPanel.Controls.Add(reportDataGridView);
+
+            // Add report panel to form
+            Controls.Add(reportPanel);
+        }
+
+        private void GenerateReportButton_Click(object sender, EventArgs e)
+        {
+            if (reportTypeComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a report type.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string reportType = reportTypeComboBox.SelectedItem.ToString();
+            DateTime fromDate = fromDatePicker.Value.Date;
+            DateTime toDate = toDatePicker.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            if (fromDate > toDate)
+            {
+                MessageBox.Show("From Date cannot be after To Date.", "Invalid Date Range", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                switch (reportType)
+                {
+                    case "Sales Report":
+                        GenerateSalesReport(fromDate, toDate);
+                        break;
+                    case "Inventory Report":
+                        GenerateInventoryReport(fromDate, toDate);
+                        break;
+                    case "User Activity Report":
+                        GenerateUserActivityReport(fromDate, toDate);
+                        break;
+                    case "Popular Items Report":
+                        GeneratePopularItemsReport(fromDate, toDate);
+                        break;
+                    default:
+                        MessageBox.Show("Invalid report type selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                }
+
+                LogOperation("Report Generation", $"Generated {reportType} from {fromDate.ToShortDateString()} to {toDate.ToShortDateString()}");
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                MessageBox.Show($"Error generating report: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void GenerateSalesReport(DateTime fromDate, DateTime toDate)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                string query = @"
+                    SELECT 
+                        CONVERT(date, o.order_date) AS Date,
+                        COUNT(DISTINCT o.order_id) AS TotalOrders,
+                        SUM(oi.quantity * oi.unit_price) AS TotalSales,
+                        AVG(oi.quantity * oi.unit_price) AS AverageOrderValue
+                    FROM 
+                        orders o
+                        INNER JOIN order_items oi ON o.order_id = oi.order_id
+                    WHERE 
+                        o.order_date BETWEEN @fromDate AND @toDate
+                    GROUP BY 
+                        CONVERT(date, o.order_date)
+                    ORDER BY 
+                        Date";
+
+                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
+                adapter.SelectCommand.Parameters.AddWithValue("@toDate", toDate);
+
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                if (dataTable.Rows.Count > 0)
+                {
+                    reportDataGridView.DataSource = dataTable;
+
+                    if (reportDataGridView.Columns["TotalSales"] != null)
+                        reportDataGridView.Columns["TotalSales"].DefaultCellStyle.Format = "C";
+                    if (reportDataGridView.Columns["AverageOrderValue"] != null)
+                        reportDataGridView.Columns["AverageOrderValue"].DefaultCellStyle.Format = "C";
+                }
+                else
+                {
+                    MessageBox.Show("No sales data found for the selected date range.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    reportDataGridView.DataSource = null;
+                }
+            }
+        }
+
+        private void GenerateInventoryReport(DateTime fromDate, DateTime toDate)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                string query = @"
+                    SELECT 
+                        COALESCE(p.product_name, 'Product ID: ' + CAST(i.product_id AS VARCHAR(10))) AS ProductName,
+                        i.quantity_in_stock AS CurrentStock,
+                        i.minimum_stock_level AS ReorderLevel,
+                        CASE 
+                            WHEN i.quantity_in_stock <= i.minimum_stock_level THEN 'Reorder Required'
+                            WHEN i.quantity_in_stock <= (i.minimum_stock_level * 1.5) THEN 'Low Stock'
+                            ELSE 'In Stock'
+                        END AS Status,
+                        FORMAT(COALESCE(p.unit_price, 0), 'C') AS UnitPrice
+                    FROM 
+                        inventory i
+                        LEFT JOIN products p ON i.product_id = p.product_id
+                    WHERE i.is_active = 1
+                    ORDER BY 
+                        CASE 
+                            WHEN i.quantity_in_stock <= i.minimum_stock_level THEN 1
+                            WHEN i.quantity_in_stock <= (i.minimum_stock_level * 1.5) THEN 2
+                            ELSE 3
+                        END,
+                        p.product_name";
+
+                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                if (dataTable.Rows.Count > 0)
+                {
+                    reportDataGridView.DataSource = dataTable;
+
+                    reportDataGridView.CellFormatting -= ReportDataGridView_CellFormatting;
+                    reportDataGridView.CellFormatting += ReportDataGridView_CellFormatting;
+
+                    reportDataGridView.Columns["ProductName"].HeaderText = "Product Name";
+                    reportDataGridView.Columns["CurrentStock"].HeaderText = "Current Stock";
+                    reportDataGridView.Columns["ReorderLevel"].HeaderText = "Reorder Level";
+                    reportDataGridView.Columns["Status"].HeaderText = "Status";
+                    reportDataGridView.Columns["UnitPrice"].HeaderText = "Unit Price";
+                }
+                else
+                {
+                    MessageBox.Show("No inventory data found.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    reportDataGridView.DataSource = null;
+                }
+            }
+        }
+
+        private void ReportDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (reportDataGridView.Columns[e.ColumnIndex].Name == "Status" && e.RowIndex >= 0)
+            {
+                string status = e.Value?.ToString();
+                switch (status)
+                {
+                    case "Reorder Required":
+                        e.CellStyle.ForeColor = Color.Red;
+                        e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
+                        break;
+                    case "Low Stock":
+                        e.CellStyle.ForeColor = Color.Orange;
+                        e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
+                        break;
+                    case "In Stock":
+                        e.CellStyle.ForeColor = Color.Green;
+                        break;
+                }
+            }
+        }
+
+        private void GenerateUserActivityReport(DateTime fromDate, DateTime toDate)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                string query = @"
+                    SELECT 
+                        u.username AS Username,
+                        r.role_name AS Role,
+                        COUNT(ul.log_id) AS LoginCount,
+                        MIN(ul.login_time) AS FirstLogin,
+                        MAX(ul.login_time) AS LastLogin,
+                        ISNULL(AVG(CAST(DATEDIFF(MINUTE, ul.login_time, 
+                            CASE WHEN ul.logout_time IS NULL THEN GETDATE() ELSE ul.logout_time END) AS FLOAT)), 0) AS AvgSessionMinutes
+                    FROM 
+                        users u
+                        INNER JOIN roles r ON u.role_id = r.role_id
+                        LEFT JOIN user_logs ul ON u.user_id = ul.user_id AND ul.login_time BETWEEN @fromDate AND @toDate
+                    WHERE 
+                        u.role_id != 2
+                    GROUP BY 
+                        u.username, r.role_name
+                    ORDER BY 
+                        LoginCount DESC";
+
+                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
+                adapter.SelectCommand.Parameters.AddWithValue("@toDate", toDate);
+
+                DataTable dataTable = new DataTable();
+
+                try
+                {
+                    adapter.Fill(dataTable);
+                }
+                catch (SqlException ex)
+                {
+                    if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("Invalid column name"))
+                    {
+                        query = @"
+                            SELECT 
+                                u.username AS Username,
+                                r.role_name AS Role,
+                                0 AS LoginCount,
+                                NULL AS FirstLogin,
+                                NULL AS LastLogin,
+                                0 AS AvgSessionMinutes
+                            FROM 
+                                users u
+                                INNER JOIN roles r ON u.role_id = r.role_id
+                            WHERE 
+                                u.role_id != 2
+                            ORDER BY 
+                                u.username";
+
+                        adapter = new SqlDataAdapter(query, connection);
+                        adapter.Fill(dataTable);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                if (dataTable.Rows.Count > 0)
+                {
+                    DataTable formattedTable = new DataTable();
+                    formattedTable.Columns.Add("Username", typeof(string));
+                    formattedTable.Columns.Add("Role", typeof(string));
+                    formattedTable.Columns.Add("LoginCount", typeof(int));
+                    formattedTable.Columns.Add("FirstLogin", typeof(string));
+                    formattedTable.Columns.Add("LastLogin", typeof(string));
+                    formattedTable.Columns.Add("AvgSessionTime", typeof(string));
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        DataRow newRow = formattedTable.NewRow();
+                        newRow["Username"] = row["Username"];
+                        newRow["Role"] = row["Role"];
+                        newRow["LoginCount"] = row["LoginCount"];
+
+                        newRow["FirstLogin"] = row["FirstLogin"] == DBNull.Value ? "N/A" :
+                            Convert.ToDateTime(row["FirstLogin"]).ToString("yyyy-MM-dd HH:mm");
+                        newRow["LastLogin"] = row["LastLogin"] == DBNull.Value ? "N/A" :
+                            Convert.ToDateTime(row["LastLogin"]).ToString("yyyy-MM-dd HH:mm");
+
+                        string sessionTime = "N/A";
+                        if (row["AvgSessionMinutes"] != DBNull.Value)
+                        {
+                            string avgSessionStr = row["AvgSessionMinutes"].ToString();
+                            if (double.TryParse(avgSessionStr, out double minutes) && minutes > 0)
+                            {
+                                TimeSpan timeSpan = TimeSpan.FromMinutes(minutes);
+                                sessionTime = $"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}";
+                            }
+                            else
+                            {
+                                sessionTime = "00:00";
+                            }
+                        }
+                        newRow["AvgSessionTime"] = sessionTime;
+
+                        formattedTable.Rows.Add(newRow);
+                    }
+
+                    reportDataGridView.DataSource = formattedTable;
+                }
+                else
+                {
+                    MessageBox.Show("No user activity data found for the selected date range.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    reportDataGridView.DataSource = null;
+                }
+            }
+        }
+
+        private void GeneratePopularItemsReport(DateTime fromDate, DateTime toDate)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                string query = @"
+                    SELECT 
+                        p.product_name AS Item,
+                        SUM(oi.quantity) AS TotalQuantitySold,
+                        SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
+                        COUNT(DISTINCT o.order_id) AS OrderCount,
+                        CAST(COUNT(DISTINCT o.order_id) * 100.0 / 
+                            (SELECT COUNT(DISTINCT order_id) FROM orders WHERE order_date BETWEEN @fromDate AND @toDate) 
+                            AS DECIMAL(5,2)) AS OrderPercentage
+                    FROM 
+                        order_items oi
+                        INNER JOIN orders o ON oi.order_id = o.order_id
+                        INNER JOIN products p ON oi.product_id = p.product_id
+                    WHERE 
+                        o.order_date BETWEEN @fromDate AND @toDate
+                    GROUP BY 
+                        p.product_name
+                    ORDER BY 
+                        TotalQuantitySold DESC";
+
+                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
+                adapter.SelectCommand.Parameters.AddWithValue("@toDate", toDate);
+
+                DataTable dataTable = new DataTable();
+
+                try
+                {
+                    adapter.Fill(dataTable);
+                }
+                catch (SqlException ex)
+                {
+                    if (ex.Message.Contains("Invalid object name") || ex.Message.Contains("Invalid column name"))
+                    {
+                        query = @"
+                            SELECT 
+                                'Product ' + CAST(oi.product_id AS VARCHAR(10)) AS Item,
+                                SUM(oi.quantity) AS TotalQuantitySold,
+                                SUM(oi.quantity * oi.unit_price) AS TotalRevenue,
+                                COUNT(DISTINCT o.order_id) AS OrderCount
+                            FROM 
+                                order_items oi
+                                INNER JOIN orders o ON oi.order_id = o.order_id
+                            WHERE 
+                                o.order_date BETWEEN @fromDate AND @toDate
+                            GROUP BY 
+                                oi.product_id
+                            ORDER BY 
+                                TotalQuantitySold DESC";
+
+                        adapter = new SqlDataAdapter(query, connection);
+                        adapter.SelectCommand.Parameters.AddWithValue("@fromDate", fromDate);
+                        adapter.SelectCommand.Parameters.AddWithValue("@toDate", toDate);
+                        adapter.Fill(dataTable);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                if (dataTable.Rows.Count > 0)
+                {
+                    reportDataGridView.DataSource = dataTable;
+
+                    if (reportDataGridView.Columns["OrderPercentage"] != null)
+                        reportDataGridView.Columns["OrderPercentage"].DefaultCellStyle.Format = "0.00\\%";
+                    if (reportDataGridView.Columns["TotalRevenue"] != null)
+                        reportDataGridView.Columns["TotalRevenue"].DefaultCellStyle.Format = "C";
+                }
+                else
+                {
+                    MessageBox.Show("No sales data found for the selected date range.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    reportDataGridView.DataSource = null;
+                }
+            }
+        }
+
+        private void LogError(Exception ex)
+        {
+            try
+            {
+                System.IO.File.AppendAllText("error.log", $"{DateTime.Now}: {ex.Message}\n{ex.StackTrace}\n");
+            }
+            catch
+            {
+                // Suppress logging errors
+            }
+        }
+
+        private void LogOperation(string operation, string details)
+        {
+            try
+            {
+                System.IO.File.AppendAllText("operation.log", $"{DateTime.Now}: {operation} - {details} (User: {_userId})\n");
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+        }
+
         private void UserShowbtn_Click(object sender, EventArgs e)
         {
             LoadData();
@@ -289,6 +831,8 @@ namespace CafeManagemnt
             EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = false;
+            if (reportPanel != null) reportPanel.Visible = false;
+            if (menuPanel != null) menuPanel.Visible = false;
 
             dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
@@ -301,6 +845,8 @@ namespace CafeManagemnt
             EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = false;
+            if (reportPanel != null) reportPanel.Visible = false;
+            if (menuPanel != null) menuPanel.Visible = false;
 
             dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
@@ -312,18 +858,265 @@ namespace CafeManagemnt
             Stafflist_btn.Visible = true;
             EFstaff_btn.Visible = true;
             Backtostaff.Visible = false;
+            if (reportPanel != null) reportPanel.Visible = false;
+            if (menuPanel != null) menuPanel.Visible = false;
 
             dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
 
+        private Panel menuPanel;
+
         private void MenuManagement_btn_Click(object sender, EventArgs e)
         {
+            // Remove existing button if it exists
+            if (Controls.Contains(addNewItemButton))
+            {
+                Controls.Remove(addNewItemButton);
+                addNewItemButton.Dispose();
+            }
+
+            LoadMenuData();
+            Newstaff_btn.Visible = false;
+            Stafflist_btn.Visible = false;
+            EFstaff_btn.Visible = false;
+            dataGridView1.Visible = true;
+            Backtostaff.Visible = false;
+            if (reportPanel != null) reportPanel.Visible = false;
+            if (menuPanel != null) menuPanel.Visible = false;
+
             dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
+            dataGridView1.CellContentClick += MenuDataGridView_CellContentClick;
+        }
+
+        private void LoadMenuData()
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                {
+                    string query = @"SELECT 
+                            p.product_id AS 'ID',
+                            p.product_name AS 'Menu Item',
+                            p.category AS 'Category',
+                            p.unit_price AS 'Price',
+                            i.quantity_in_stock AS 'Stock',
+                            CASE WHEN p.is_active = 1 THEN 'Active' ELSE 'Inactive' END AS 'Status'
+                        FROM 
+                            products p
+                        INNER JOIN 
+                            inventory i ON p.product_id = i.product_id
+                        ORDER BY 
+                            p.category, p.product_name";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                    DataTable menuDataTable = new DataTable();
+                    adapter.Fill(menuDataTable);
+
+                    dataGridView1.DataSource = null;
+                    dataGridView1.Columns.Clear();
+                    dataGridView1.DataSource = menuDataTable;
+
+                    // Add edit and toggle status buttons
+                    DataGridViewButtonColumn editButtonColumn = new DataGridViewButtonColumn
+                    {
+                        Name = "Edit",
+                        HeaderText = "Edit",
+                        Text = "Edit",
+                        UseColumnTextForButtonValue = true,
+                        Width = 80
+                    };
+                    dataGridView1.Columns.Add(editButtonColumn);
+
+                    DataGridViewButtonColumn toggleButtonColumn = new DataGridViewButtonColumn
+                    {
+                        Name = "Toggle",
+                        HeaderText = "Toggle",
+                        Text = "Toggle",
+                        UseColumnTextForButtonValue = true,
+                        Width = 80
+                    };
+                    dataGridView1.Columns.Add(toggleButtonColumn);
+
+                    // Format columns
+                    if (dataGridView1.Columns["ID"] != null)
+                        dataGridView1.Columns["ID"].Width = 60;
+                    if (dataGridView1.Columns["Menu Item"] != null)
+                        dataGridView1.Columns["Menu Item"].Width = 200;
+                    if (dataGridView1.Columns["Category"] != null)
+                        dataGridView1.Columns["Category"].Width = 120;
+                    if (dataGridView1.Columns["Price"] != null)
+                    {
+                        dataGridView1.Columns["Price"].Width = 100;
+                        dataGridView1.Columns["Price"].DefaultCellStyle.Format = "0.00 $";
+                        dataGridView1.Columns["Price"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    }
+                    if (dataGridView1.Columns["Stock"] != null)
+                        dataGridView1.Columns["Stock"].Width = 80;
+                    if (dataGridView1.Columns["Status"] != null)
+                        dataGridView1.Columns["Status"].Width = 80;
+
+                    SetupDataGridView();
+
+                    // Add "Add New Item" button below the DataGridView
+                    AddNewItemButton();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading menu data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void AddNewItemButton()
+        {
+            // Remove existing button if it exists
+            if (Controls.Contains(addNewItemButton))
+            {
+                Controls.Remove(addNewItemButton);
+                addNewItemButton.Dispose();
+            }
+
+            // Create new button
+            addNewItemButton = new Button
+            {
+                Text = "➕ Add New Menu Item",
+                Size = new Size(200, 45),
+                BackColor = Color.FromArgb(67, 40, 24),
+                ForeColor = Color.White,
+                Font = new Font("Calibri", 12, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Location = new Point(dataGridView1.Left, dataGridView1.Bottom + 20)
+            };
+            addNewItemButton.FlatAppearance.BorderSize = 2;
+            addNewItemButton.FlatAppearance.BorderColor = Color.White;
+            addNewItemButton.Click += (s, e) =>
+            {
+                MenuItemForm newItemForm = new MenuItemForm(0); // 0 for new item
+                if (newItemForm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadMenuData(); // Refresh data after adding new item
+                }
+            };
+
+            // Add button to form
+            Controls.Add(addNewItemButton);
+
+            // Adjust form height to accommodate the button
+            this.Height = addNewItemButton.Bottom + 70;
+        }
+
+        // Add this field to your class variables
+        private Button addNewItemButton;
+
+        private void MenuDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
+            int productId = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value);
+            string productName = dataGridView1.Rows[e.RowIndex].Cells["Menu Item"].Value.ToString();
+
+            if (columnName == "Edit")
+            {
+                try
+                {
+                    MenuItemForm editForm = new MenuItemForm(productId);
+                    if (editForm.ShowDialog() == DialogResult.OK)
+                    {
+                        LoadMenuData(); // Refresh data after editing
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error editing menu item: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (columnName == "Toggle")
+            {
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(ConnectionString))
+                    {
+                        string query = @"UPDATE products 
+                               SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END 
+                               WHERE product_id = @product_id";
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@product_id", productId);
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                            LoadMenuData(); // Refresh data after toggling
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error toggling menu item status: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void ShowMenuManagementPanel()
+        {
+            dataGridView1.Visible = false;
+            Newstaff_btn.Visible = false;
+            Stafflist_btn.Visible = false;
+            EFstaff_btn.Visible = false;
+            Backtostaff.Visible = false;
+            if (reportPanel != null) reportPanel.Visible = false;
+
+            if (!Controls.Contains(menuPanel))
+            {
+                CreateMenuManagementPanel();
+            }
+
+            menuPanel.Visible = true;
+        }
+
+        private void CreateMenuManagementPanel()
+        {
+            menuPanel = new Panel
+            {
+                BackColor = Color.FromArgb(176, 137, 104),
+                Location = dataGridView1.Location,
+                Name = "menuPanel",
+                Size = dataGridView1.Size,
+                Visible = false
+            };
+
+            Button addNewItemButton = new Button
+            {
+                Text = "➕ Add New Menu Item",
+                Size = new Size(200, 45),
+                BackColor = Color.FromArgb(67, 40, 24),
+                ForeColor = Color.White,
+                Font = new Font("Calibri", 12, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Location = new Point(20, 20)
+            };
+            addNewItemButton.FlatAppearance.BorderSize = 2;
+            addNewItemButton.FlatAppearance.BorderColor = Color.White;
+
+            addNewItemButton.Click += (s, ev) =>
+            {
+                MenuItemForm newItemForm = new MenuItemForm(0); // 0 for new item
+                if (newItemForm.ShowDialog() == DialogResult.OK)
+                {
+                    // No need to reload menu items since display is removed
+                }
+            };
+
+            menuPanel.Controls.Add(addNewItemButton);
+            Controls.Add(menuPanel);
         }
 
         private void Report_btn_Click(object sender, EventArgs e)
         {
+            ShowReportOptions();
             dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
+            if (menuPanel != null) menuPanel.Visible = false;
         }
 
         private void Newstaff_btn_Click(object sender, EventArgs e)
@@ -335,24 +1128,28 @@ namespace CafeManagemnt
 
         private void Stafflist_btn_Click(object sender, EventArgs e)
         {
-            LoadStaffData(); // Load without Edit/Fire buttons
+            LoadStaffData();
             Newstaff_btn.Visible = false;
             Stafflist_btn.Visible = false;
             EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = true;
+            if (reportPanel != null) reportPanel.Visible = false;
+            if (menuPanel != null) menuPanel.Visible = false;
 
             dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
 
         private void Editstaff_btn_Click(object sender, EventArgs e)
         {
-            LoadStaffData(includeEditDisableButtons: true); // Load with Edit/Fire buttons
+            LoadStaffData(includeEditDisableButtons: true);
             Newstaff_btn.Visible = false;
             Stafflist_btn.Visible = false;
             EFstaff_btn.Visible = false;
             dataGridView1.Visible = true;
             Backtostaff.Visible = true;
+            if (reportPanel != null) reportPanel.Visible = false;
+            if (menuPanel != null) menuPanel.Visible = false;
 
             dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
             dataGridView1.CellContentClick += DataGridView1_CellContentClick;
@@ -360,11 +1157,10 @@ namespace CafeManagemnt
 
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return; // Ignore header clicks
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
 
             string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
 
-            // Check if User ID column exists and has a valid value
             if (dataGridView1.Rows[e.RowIndex].Cells["User ID"].Value == null)
             {
                 MessageBox.Show("Invalid user ID.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -390,7 +1186,7 @@ namespace CafeManagemnt
                 {
                     EditStaffForm editForm = new EditStaffForm(userId);
                     editForm.ShowDialog();
-                    LoadStaffData(includeEditDisableButtons: true); // Refresh with buttons
+                    LoadStaffData(includeEditDisableButtons: true);
                 }
                 catch (Exception ex)
                 {
@@ -422,7 +1218,7 @@ namespace CafeManagemnt
                                 if (rowsAffected > 0)
                                 {
                                     MessageBox.Show($"User '{username}' Fire successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    LoadStaffData(includeEditDisableButtons: true); // Refresh with buttons
+                                    LoadStaffData(includeEditDisableButtons: true);
                                 }
                                 else
                                 {
@@ -446,6 +1242,8 @@ namespace CafeManagemnt
             Stafflist_btn.Visible = true;
             EFstaff_btn.Visible = true;
             Backtostaff.Visible = false;
+            if (reportPanel != null) reportPanel.Visible = false;
+            if (menuPanel != null) menuPanel.Visible = false;
 
             dataGridView1.CellContentClick -= DataGridView1_CellContentClick;
         }
